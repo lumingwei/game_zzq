@@ -1,13 +1,122 @@
 <?php
 namespace Home\Controller;
 use Think\Controller;
-class QynController extends Controller {
-    public function index(){
+class QynController extends BaseController {
+    //登录页面
+    public function login(){
+        if(IS_POST){
+            $name      = !empty($_REQUEST['name'])?$_REQUEST['name']:'';
+            $pwd       = !empty($_REQUEST['pwd'])?$_REQUEST['pwd']:'';
+            if(empty($name) || empty($pwd)){
+                $this->error('param error!','/Qyn/login');
+            }
+            $info      = M('User')->where("name='%s'",array($name))->find();
+            if($info['pwd'] == md5('lmw'.$pwd)){
+                if($info['status'] != 1){
+                    $this->error('user is ban!','/Qyn/login');
+                }
+                $_SESSION['uid']         = $info['uid'];
+                $_SESSION['name']        = $info['name'];
+                $_SESSION['status']      = $info['status'];
+                $_SESSION['create_time'] = $info['create_time'];
+            }else{
+                $this->error('name or pwd error!','/Qyn/login');
+            }
+            $this->success('登录成功', '/Qyn/index');
+        }
+    }
+
+    //注册页面
+    public function reg(){
+        if(IS_POST){
+            $name      = !empty($_REQUEST['name'])?$_REQUEST['name']:'';
+            $pwd       = !empty($_REQUEST['pwd'])?$_REQUEST['pwd']:'';
+            if(empty($name) || empty($pwd)){
+                $this->error('param error!','/Qyn/login');
+            }
+            $res      = M('User')->add(array('name'=>$name,'pwd'=>md5($pwd),'create_time'=>time()));
+            if($res){
+                $this->success('注册成功', '/Qyn/login');
+            }else{
+                $this->error('注册失败-用户名已被注册','/Qyn/reg');
+            }
+        }
+    }
+
+    //发起挑战
+    public function find_fight(){
+        $uid               = !empty($_REQUEST['uid'])?$_REQUEST['uid']:0;
+        $find_fight_list   = S('find_fight'.$_SESSION['uid'])?S('find_fight'.$_SESSION['uid']):array();
+        $find_fight_list[] = $uid;
+        S('find_fight'.$_SESSION['uid'],json_encode($find_fight_list),array('expire'=>60));
+        $find_fight_list_2 = S('find_fight'.$uid)?S('find_fight'.$uid):array();
+        $find_fight_list_2[] = $_SESSION['uid'];
+        S('find_fight'.$uid,json_encode($find_fight_list_2),array('expire'=>60));
+        $this->json_return(array(),0,'发起成功');
+    }
+
+    //接受挑战
+    public function accept_fight(){
+        $uid               = !empty($_REQUEST['uid'])?$_REQUEST['uid']:0;
+        $find_fight_list   = S('find_fight'.$_SESSION['uid'])?S('find_fight'.$_SESSION['uid']):array();
+        if(!in_array($uid,$find_fight_list)){
+            $this->json_return(array(),1,'对手已经离开了!');
+        }else{
+            $insert  = M('FightLog')->add(array('uid1'=>$uid,'uid2'=>$_SESSION['uid'],'create_time'=>time()));
+            if(!empty($insert)){
+                $this->json_return(array('fight_id'=>$insert),0,'准备进入战斗!');
+            }else{
+                $this->json_return(array(),2,'数据异常!');
+            }
+        }
+    }
+
+    //拒绝挑战
+    public function refuse_fight(){
+        $uid               = !empty($_REQUEST['uid'])?$_REQUEST['uid']:0;
+        $find_fight_list   = S('find_fight'.$_SESSION['uid'])?S('find_fight'.$_SESSION['uid']):array();
+        if(!empty($find_fight_list)){
+            foreach ($find_fight_list as $k =>$v){
+                if($uid == $v){
+                    unset($find_fight_list[$k]);
+                }
+            }
+            $find_fight_list = !empty($find_fight_list)?$find_fight_list:array();
+            S('find_fight'.$uid,json_encode($find_fight_list),array('expire'=>60));
+        }
+
+        $find_fight_list   = S('find_fight'.$uid)?S('find_fight'.$uid):array();
+        if(!empty($find_fight_list)){
+            foreach ($find_fight_list as $k =>$v){
+                if($_SESSION['uid'] == $v){
+                    unset($find_fight_list[$k]);
+                }
+            }
+            $find_fight_list = !empty($find_fight_list)?$find_fight_list:array();
+            S('find_fight'.$uid,json_encode($find_fight_list),array('expire'=>60));
+        }
+
+        $this->json_return(array(),0,'成功');
+    }
+
+    //开战
+    public function open_fight(){
+        $fight_id     = !empty($_REQUEST['fight_id'])?$_REQUEST['fight_id']:0;
+        $info         = M("FightLog")->where(array('id'=>$fight_id))->find();
+        
+    }
+
+    //战斗中
+    public function fighting(){
+        $uid     = !empty($_REQUEST['fight_id'])?$_REQUEST['fight_id']:0;
+    }
+
+    //初始化数据
+    public function create_data(){
         if(isset($_REQUEST['spe']) && $_REQUEST['spe']=='lmw666'){
             $delete_sql[]="truncate table qyn.qyn_user";
             $delete_sql[]="truncate table qyn.qyn_role";
             $delete_sql[]="truncate table qyn.qyn_skill";
-            $delete_sql[]="truncate table qyn.qyn_skill_level";
             $delete_sql[]="truncate table qyn.qyn_fight_log";
             foreach($delete_sql as $del){
                 @M()->query($del);
@@ -21,7 +130,7 @@ class QynController extends Controller {
         exit('success!');
     }
 
-    public function init_data($type = 1){
+    private function init_data($type = 1){
         if($type == 1){
             //角色导入
             $this->init_role();
@@ -345,7 +454,7 @@ class QynController extends Controller {
         $data['defense']     = 100;
         $data['vitality']    = 1000;
         $data['energy']      = 100;
-        $data['skills']      = '';
+        $data['skills']      = '母性之光';
         $data['describe']    = '范建之母';
         $insert[] = $data;
 
@@ -355,7 +464,7 @@ class QynController extends Controller {
         $data['defense']     = 200;
         $data['vitality']    = 1800;
         $data['energy']      = 100;
-        $data['skills']      = '';
+        $data['skills']      = '霸道真气';
         $data['describe']    = '范建之子';
         $insert[] = $data;
 
@@ -365,7 +474,7 @@ class QynController extends Controller {
         $data['defense']     = 500;
         $data['vitality']    = 1500;
         $data['energy']      = 100;
-        $data['skills']      = '';
+        $data['skills']      = '虎卫护主';
         $data['describe']    = '范闲之父';
         $insert[] = $data;
 
@@ -375,7 +484,7 @@ class QynController extends Controller {
         $data['defense']     = 100;
         $data['vitality']    = 1000;
         $data['energy']      = 100;
-        $data['skills']      = '';
+        $data['skills']      = '百步穿杨';
         $data['describe']    = '范建之女';
         $insert[] = $data;
 
@@ -405,7 +514,7 @@ class QynController extends Controller {
         $data['defense']     = 400;
         $data['vitality']    = 1000;
         $data['energy']      = 100;
-        $data['skills']      = '';
+        $data['skills']      = '虎卫护主';
         $data['describe']    = '庆国虎卫';
         $insert[] = $data;
 
@@ -415,7 +524,7 @@ class QynController extends Controller {
         $data['defense']     = 300;
         $data['vitality']    = 1300;
         $data['energy']      = 100;
-        $data['skills']      = '';
+        $data['skills']      = '走为上计';
         $data['describe']    = '范闲之友';
         $insert[] = $data;
 
@@ -436,7 +545,7 @@ class QynController extends Controller {
         $data['defense']     = 100;
         $data['vitality']    = 1000;
         $data['energy']      = 100;
-        $data['skills']      = '';
+        $data['skills']      = '反间妙计,黑骑出击';
         $data['describe']    = '庆国监察院长';
         $insert[] = $data;
 
@@ -446,7 +555,7 @@ class QynController extends Controller {
         $data['defense']     = 500;
         $data['vitality']    = 1800;
         $data['energy']      = 100;
-        $data['skills']      = '';
+        $data['skills']      = '图穷匕见';
         $data['describe']    = '';
         $insert[] = $data;
 
@@ -457,7 +566,7 @@ class QynController extends Controller {
         $data['defense']     = 200;
         $data['vitality']    = 1000;
         $data['energy']      = 100;
-        $data['skills']      = '';
+        $data['skills']      = '反间妙计';
         $data['describe']    = '';
         $insert[] = $data;
 
@@ -467,7 +576,7 @@ class QynController extends Controller {
         $data['defense']     = 300;
         $data['vitality']    = 1200;
         $data['energy']      = 100;
-        $data['skills']      = '';
+        $data['skills']      = '反间妙计';
         $data['describe']    = '';
         $insert[] = $data;
 
@@ -477,7 +586,7 @@ class QynController extends Controller {
         $data['defense']     = 300;
         $data['vitality']    = 1200;
         $data['energy']      = 100;
-        $data['skills']      = '';
+        $data['skills']      = '用毒如神';
         $data['describe']    = '';
         $insert[] = $data;
 
@@ -487,7 +596,7 @@ class QynController extends Controller {
         $data['defense']     = 300;
         $data['vitality']    = 1200;
         $data['energy']      = 100;
-        $data['skills']      = '';
+        $data['skills']      = '反间妙计';
         $data['describe']    = '';
         $insert[] = $data;
 
@@ -497,7 +606,7 @@ class QynController extends Controller {
         $data['defense']     = 400;
         $data['vitality']    = 2000;
         $data['energy']      = 100;
-        $data['skills']      = '';
+        $data['skills']      = '君临天下,霸道真气';
         $data['describe']    = '';
         $insert[] = $data;
 
@@ -507,7 +616,7 @@ class QynController extends Controller {
         $data['defense']     = 300;
         $data['vitality']    = 1200;
         $data['energy']      = 100;
-        $data['skills']      = '';
+        $data['skills']      = '皇族气质';
         $data['describe']    = '';
         $insert[] = $data;
 
@@ -517,7 +626,7 @@ class QynController extends Controller {
         $data['defense']     = 300;
         $data['vitality']    = 1200;
         $data['energy']      = 100;
-        $data['skills']      = '';
+        $data['skills']      = '皇族气质';
         $data['describe']    = '';
         $insert[] = $data;
 
@@ -537,7 +646,7 @@ class QynController extends Controller {
         $data['defense']     = 300;
         $data['vitality']    = 1300;
         $data['energy']      = 100;
-        $data['skills']      = '';
+        $data['skills']      = '一剑封喉';
         $data['describe']    = '';
         $insert[] = $data;
 
@@ -547,7 +656,7 @@ class QynController extends Controller {
         $data['defense']     = 300;
         $data['vitality']    = 1200;
         $data['energy']      = 100;
-        $data['skills']      = '';
+        $data['skills']      = '皇族气质';
         $data['describe']    = '';
         $insert[] = $data;
 
@@ -557,7 +666,7 @@ class QynController extends Controller {
         $data['defense']     = 100;
         $data['vitality']    = 1000;
         $data['energy']      = 100;
-        $data['skills']      = '';
+        $data['skills']      = '柔情似水';
         $data['describe']    = '';
         $insert[] = $data;
 
@@ -567,7 +676,7 @@ class QynController extends Controller {
         $data['defense']     = 200;
         $data['vitality']    = 1000;
         $data['energy']      = 100;
-        $data['skills']      = '';
+        $data['skills']      = '灵丹妙药';
         $data['describe']    = '';
         $insert[] = $data;
 
@@ -577,7 +686,7 @@ class QynController extends Controller {
         $data['defense']     = 200;
         $data['vitality']    = 1200;
         $data['energy']      = 100;
-        $data['skills']      = '';
+        $data['skills']      = '百步穿杨';
         $data['describe']    = '';
         $insert[] = $data;
 
@@ -607,7 +716,7 @@ class QynController extends Controller {
         $data['defense']     = 400;
         $data['vitality']    = 1800;
         $data['energy']      = 100;
-        $data['skills']      = '';
+        $data['skills']      = '九品巅峰';
         $data['describe']    = '';
         $insert[] = $data;
 
@@ -657,7 +766,7 @@ class QynController extends Controller {
         $data['defense']     = 200;
         $data['vitality']    = 1000;
         $data['energy']      = 100;
-        $data['skills']      = '';
+        $data['skills']      = '垂帘听政';
         $data['describe']    = '';
         $insert[] = $data;
 
@@ -667,7 +776,7 @@ class QynController extends Controller {
         $data['defense']     = 200;
         $data['vitality']    = 1200;
         $data['energy']      = 100;
-        $data['skills']      = '';
+        $data['skills']      = '柔情似水';
         $data['describe']    = '';
         $insert[] = $data;
 
@@ -677,7 +786,7 @@ class QynController extends Controller {
         $data['defense']     = 200;
         $data['vitality']    = 1300;
         $data['energy']      = 100;
-        $data['skills']      = '';
+        $data['skills']      = '君临天下';
         $data['describe']    = '';
         $insert[] = $data;
 
@@ -687,7 +796,7 @@ class QynController extends Controller {
         $data['defense']     = 400;
         $data['vitality']    = 1500;
         $data['energy']      = 100;
-        $data['skills']      = '';
+        $data['skills']      = '振奋精神';
         $data['describe']    = '';
         $insert[] = $data;
 
@@ -707,7 +816,7 @@ class QynController extends Controller {
         $data['defense']     = 100;
         $data['vitality']    = 1000;
         $data['energy']      = 100;
-        $data['skills']      = '';
+        $data['skills']      = '柔情似水';
         $data['describe']    = '';
         $insert[] = $data;
 
@@ -717,7 +826,7 @@ class QynController extends Controller {
         $data['defense']     = 100;
         $data['vitality']    = 1000;
         $data['energy']      = 100;
-        $data['skills']      = '';
+        $data['skills']      = '教化春风';
         $data['describe']    = '';
         $insert[] = $data;
 
@@ -727,7 +836,7 @@ class QynController extends Controller {
         $data['defense']     = 400;
         $data['vitality']    = 1300;
         $data['energy']      = 100;
-        $data['skills']      = '';
+        $data['skills']      = '巨树暴击';
         $data['describe']    = '';
         $insert[] = $data;
 
@@ -737,7 +846,7 @@ class QynController extends Controller {
         $data['defense']     = 400;
         $data['vitality']    = 1300;
         $data['energy']      = 100;
-        $data['skills']      = '';
+        $data['skills']      = '大将陷阵';
         $data['describe']    = '';
         $insert[] = $data;
 
@@ -757,7 +866,7 @@ class QynController extends Controller {
         $data['defense']     = 500;
         $data['vitality']    = 1800;
         $data['energy']      = 100;
-        $data['skills']      = '';
+        $data['skills']      = '饿狼出击';
         $data['describe']    = '';
         $insert[] = $data;
 
@@ -767,7 +876,7 @@ class QynController extends Controller {
         $data['defense']     = 400;
         $data['vitality']    = 1500;
         $data['energy']      = 100;
-        $data['skills']      = '';
+        $data['skills']      = '鬼斧神工';
         $data['describe']    = '';
         $insert[] = $data;
 
@@ -777,7 +886,7 @@ class QynController extends Controller {
         $data['defense']     = 500;
         $data['vitality']    = 1800;
         $data['energy']      = 100;
-        $data['skills']      = '';
+        $data['skills']      = '一剑封喉';
         $data['describe']    = '';
         $insert[] = $data;
 
@@ -787,7 +896,7 @@ class QynController extends Controller {
         $data['defense']     = 600;
         $data['vitality']    = 2000;
         $data['energy']      = 100;
-        $data['skills']      = '';
+        $data['skills']      = '镭射之光,一剑封喉';
         $data['describe']    = '';
         $insert[] = $data;
 

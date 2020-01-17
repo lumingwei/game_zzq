@@ -9,4 +9,10 @@ return array(
     'DB_PORT'=>3306,         //数据库端口
     'DB_PREFIX'=>'qyn_',      //数据库表前缀
     'DB_CHARSET'=>'utf8',    //数据库字符编码
+
+    'REDIS_HOST'=>'111.229.216.178',
+    'REDIS_PORT'=>6379,
+    'DATA_CACHE_TIMEOUT'=>10,
+    'REDIS_AUTH_PASSWORD'=>'redislmw123',
 );
+

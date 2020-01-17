@@ -8,18 +8,12 @@ namespace Home\Controller;
 use Think\Controller;
 class BaseController extends Controller
 {
-    protected $player_id = 1;
-    protected $goods_action = [
-        'apple_seed'      => 'sow',
-        'pear_seed'       => 'sow',
-        'watermelon_seed' => 'sow',
-        'water_can'       => 'water',
-        'muck'            => 'fertilize',
-        'insecticide'     => 'worm',
-        'clipper'         => 'shave'
-    ];
     public function  __construct()
     {
+        $no_need_login = array('login','reg','create_data');
+        if(strtolower(MODULE_NAME) == 'qyn' && !in_array(strtolower(ACTION_NAME),$no_need_login)){
+            $this->success('您尚未登录', '/Qyn/login');
+        }
         parent::__construct();
     }
     public function json_return($data = array() , $code = 0 ,$msg = 'success'){
