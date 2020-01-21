@@ -103,12 +103,86 @@ class QynController extends BaseController {
     public function open_fight(){
         $fight_id     = !empty($_REQUEST['fight_id'])?$_REQUEST['fight_id']:0;
         $info         = M("FightLog")->where(array('id'=>$fight_id))->find();
-        
+        if(!empty($info)){
+            $this->json_return(array('fight_id'=>$fight_id),0,'战斗开始!');
+        }else{
+            $this->json_return(array(),2,'数据异常!');
+        }
     }
 
     //战斗中
     public function fighting(){
-        $uid     = !empty($_REQUEST['fight_id'])?$_REQUEST['fight_id']:0;
+        $fight_id     = !empty($_REQUEST['fight_id'])?$_REQUEST['fight_id']:0;
+        $act          = !empty($_REQUEST['act'])?$_REQUEST['act']:'';
+        $role_id      = !empty($_REQUEST['role_id'])?intval($_REQUEST['role_id']):0;
+        $role_id_2    = !empty($_REQUEST['role_id_2'])?intval($_REQUEST['role_id_2']):0;
+        $skill_id     = !empty($_REQUEST['skill_id'])?intval($_REQUEST['skill_id']):0;
+
+        if(empty($fight_id) || empty($act)){
+            $this->json_return(array(),-1,'参数缺失!');
+        }
+
+        $cd   = S('qyn_act@'.$_SESSION['uid'].'@'.$act);
+        if(!empty($cd)){
+            $this->json_return(array(),1,'操作尚未冷却!');
+        }
+
+        switch($act){
+            case 'show_role':
+                $role_list   = array();
+                $tmp_list    = $this->getRoleList();
+                $random_keys = array_rand($tmp_list,5);
+                for ($i=0;$i<5;$i++){
+                    $role_list[] = $tmp_list[$random_keys[$i]];
+                }
+                $this->json_return(array('role_list'=>$role_list),0,'获取成功!');
+                break;
+            case 'select_role':
+                $role_list         = $this->getRoleList();
+                $role_list         = $this->tranKeyArray($role_list,'id');
+                if(!isset($role_list[$role_id])){
+                    $this->json_return(array(),-2,'非法操作!');
+                }
+                $user_role_list    = $this->getUserRoleList($fight_id,$role_id);
+                $this->json_return(array('user_role_list'=>$user_role_list),0,'获取成功!');
+                break;
+            case 'attack':
+                $role_list         = $this->getRoleList();
+                $role_list         = $this->tranKeyArray($role_list,'id');
+                if(!isset($role_list[$role_id]) || !isset($role_list[$role_id_2])){
+                    $this->json_return(array(),-2,'非法操作!');
+                }
+                //攻击逻辑
+
+                break;
+            case 'give_up':
+                $res         = M("FightLog")->where(array('id'=>$fight_id))->save(array('result'=>2,'update_time'=>time()));
+                if(!empty($res)){
+                    $this->json_return(array(),0,'认输!');
+                }else{
+                    $this->json_return(array(),-3,'系统异常!');
+                }
+                break;
+        }
+        $this->json_return(array(),0,'操作成功!');
+    }
+
+    private function getUserRoleList($fight_id = 0,$role_id = 0){
+        $role_list   = S($fight_id.'user_role_list'.$_SESSION['uid'])?S($fight_id.'user_role_list'.$_SESSION['uid']):array();
+        $role_list[] = $role_id;
+        S($fight_id.'user_role_list'.$_SESSION['uid'],json_encode($role_list),array('expire'=>1800));
+        return !empty($role_list)?$role_list:array();
+    }
+
+    private function getRoleList(){
+        $role_list   = S('find_fight'.$_SESSION['uid'])?S('find_fight'.$_SESSION['uid']):array();
+        if(empty($role_list)){
+            $role_list = M("Role")->select();
+            if(!empty($role_list)){
+                S('role_list',json_encode($role_list),array('expire'=>3600));
+            }
+        }
+        return !empty($role_list)?$role_list:array();
     }
 
     //初始化数据

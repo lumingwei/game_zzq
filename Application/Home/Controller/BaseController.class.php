@@ -30,4 +30,13 @@ class BaseController extends Controller
 
         die();
     }
+    public function tranKeyArray($arr = array(),$key=''){
+        $new_arr = array();
+        if(!empty($arr) && !empty($key)){
+            foreach ($arr as $v){
+                $new_arr[$v[$key]] = $v;
+            }
+        }
+        return $new_arr;
+    }
 }
