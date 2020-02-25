@@ -56,34 +56,63 @@ class IndexController extends Controller {
         );
 
     }
-    private function areaName($type = 0){
-        //花城、言城、浅玉城、花尽谷、落日城、千枯谷
-         switch($type){
-             case 7:
-                 $type = array('枫丹白露','苏黎世','洛桑');
-             break;
-             case 6:
-                 $type = array('枫丹白露','');
-                 break;
-             case 5:
-                 $type = array('枫丹白露','');
-                 break;
-             case 4:
-                 $type = array('枫丹白露','');
-                 break;
-             case 3:
-                 $type = array('枫丹白露','');
-                 break;
-             case 2:
-                 $type = array('枫丹白露','');
-                 break;
-             case 1:
-                 $type = array('枫丹白露','');
-                 break;
-             default:
-                 $type = array('荒无人烟');
-         }
+    private function getAreaName($type = 0){
+        //枫丹白露,苏黎世,洛桑
+        //落日城,朝阳城,盘龙城,昭月城,麒麟城,苍龙城,九江城,青龙城
+        $type_cn  = M("cn")->where(array('type'=>$type))->getField('type_cn');
+        return !empty($type_cn)?explode(',',$type_cn):array();
+    }
 
+    public function initCn(){
+        $area_type_tail = array(
+            '1'=>'村',
+            '2'=>'镇',
+            '3'=>'县',
+            '4'=>'州',
+            '5'=>'郡'
+        );
+        $area_type_page = array(
+            '1'=>30,
+            '2'=>20,
+            '3'=>10,
+            '4'=>2,
+            '5'=>1
+        );
+        foreach ($area_type_tail as $k=>$v){
+            echo "{$v} start  </br>";
+            for($page=1;$page<=$area_type_page[$k];$page++){
+                $list = $this->produceCn(2,$v,$page);
+                if(!empty($list)){
+                    $insert = array();
+                    foreach ($list as $cn){
+                        $data = array();
+                        $data['type']        = $k;
+                        $data['cn']          = $cn;
+                        $insert[] = $data;
+                    }
+                    M("Cn")->addAll($insert);
+                }
+                echo "{$v} page:{$page} </br>";
+            }
+            echo "{$v} end </br>";
+        }
+        echo "all success </br>";
+    }
+    private function  produceCn($word_num=2,$tail='村',$page=1){
+        $price_url = "http://www.xuanpai.com/tool/place/{$page}?word_num={$word_num}&tail={$tail}";
+        $arr  = array();
+        $cont = file_get_contents($price_url);
+        if(!empty($cont)){
+            $regex4="/<div id=\"tool_item\".*?>.*?<\/div>/ism";
+            if(preg_match_all($regex4, $cont, $matches)){
+                if(!empty($matches[0][0])){
+                    $search = '/<li>(.*?)<\/li>/is';
+                    preg_match_all($search,$matches[0][0],$r);
+                    $arr = !empty($r[1])?$r[1]:array();
+                }
+            }
+        }
+        return $arr;
     }
     public function init_data($type = 20){
         //果树类型导入
