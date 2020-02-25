@@ -26,6 +26,65 @@ class IndexController extends Controller {
         }
         exit('success!');
     }
+    public function initArea(){
+        if(isset($_REQUEST['spe']) && $_REQUEST['spe']=='lmw666'){
+            $delete_sql[]="truncate table war.war_area";
+            foreach($delete_sql as $del){
+                @M()->query($del);
+            }
+        }
+        //地图大小  10000*10000
+        //两个帝都   七个王城   三十个郡城  五十个州城 两百个县城  五百个小镇 两千个小乡村 剩下的荒无人烟
+        //1：乡村 2：小镇 3：县城 4：州城 5：郡城 6：王城 7：帝都
+        $area_type_arr = array(
+            '1'=>'乡村',
+            '2'=>'小镇',
+            '3'=>'县城',
+            '4'=>'州城',
+            '5'=>'郡城',
+            '6'=>'王城',
+            '7'=>'帝都',
+        );
+        $area_type_num = array(
+            '1'=>2000,
+            '2'=>500,
+            '3'=>200,
+            '4'=>50,
+            '5'=>30,
+            '6'=>7,
+            '7'=>2,
+        );
+
+    }
+    private function areaName($type = 0){
+        //花城、言城、浅玉城、花尽谷、落日城、千枯谷
+         switch($type){
+             case 7:
+                 $type = array('枫丹白露','苏黎世','洛桑');
+             break;
+             case 6:
+                 $type = array('枫丹白露','');
+                 break;
+             case 5:
+                 $type = array('枫丹白露','');
+                 break;
+             case 4:
+                 $type = array('枫丹白露','');
+                 break;
+             case 3:
+                 $type = array('枫丹白露','');
+                 break;
+             case 2:
+                 $type = array('枫丹白露','');
+                 break;
+             case 1:
+                 $type = array('枫丹白露','');
+                 break;
+             default:
+                 $type = array('荒无人烟');
+         }
+
+    }
     public function init_data($type = 20){
         //果树类型导入
         if($type == 1){
