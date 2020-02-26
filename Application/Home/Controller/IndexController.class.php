@@ -63,6 +63,159 @@ class IndexController extends Controller {
         return !empty($type_cn)?explode(',',$type_cn):array();
     }
 
+    public function initGeneral(){
+        $now = time();
+        set_time_limit(0);
+        //初始化武将
+        //区服
+        $server_id = 1;
+        //生成方案npc：男：5000 女 2000
+        $sex_num = array(1=>5000,2=>2000);
+        foreach($sex_num as $k =>$v){
+            $insert      = array();
+            $type        = $k==1?8:9;
+            $name_arr    = $this->getGeneralName($type,$v);
+            for($i=0;$i<$v;$i++){
+                $data = array();
+                $data['server_id']          = $server_id;
+                $data['sex']                 = $k;
+                $name                        = array_pop($name_arr);
+                $n_arr                       = !empty($name)?explode(',',$name):array();
+                if(!empty($n_arr)){
+                    $data['name']                = $n_arr[0].$n_arr[1];
+                    $data['xing']                = $n_arr[0];
+                    $data['ming']                = $n_arr[1];
+                }else{
+                    $data['name']                = '易小川';
+                    $data['xing']                = '易';
+                    $data['ming']                = '小川';
+                }
+                $data['color']               = $this->getColor();
+                $data['age']                 = rand(13,60);
+                $data['status']              = $data['age']<16?0:1;
+                $data['create_time']         = $now;
+                $power_data                   = $this->getPowerByColor($data['color']);
+                $data                         = array_merge($data,$power_data);
+                $insert[] = $data;
+            }
+            $res = M("General")->addAll($insert);
+        }
+        echo 'success';
+    }
+    private function getGeneralName($type,$num){
+        $name_arr  = M("Cn")->where(array('type'=>$type))->limit($num)->getField('cn',true);
+        return $name_arr;
+    }
+    private function getColor(){
+        //0黑 1赤  2橙 3黄 4绿 5青 6蓝 7紫
+        $color = array(
+            0=>'black',
+            1=>'red',
+            2=>'orange',
+            3=>'huang',
+            4=>'green',
+            5=>'cyan',
+            6=>'blue',
+            7=>'purple',
+        );
+        $arr[0] = 3;
+        $arr[1] = 10;
+        $arr[2] = 20;
+        $arr[3] = 30;
+        $arr[4] = 50;
+        $arr[5] = 100;
+        $arr[6] = 160;
+        $arr[7] = 200;
+        $rid         = $this->get_rand($arr); //根据概率获取奖项id
+        $col       = !empty($color[$rid])?$color[$rid]:'purple'; //获取中奖项
+        return $col;
+    }
+    private function getPowerByColor($color){
+        //tongshuai zhengzhi wuli fangyuli shengmingli meili
+        $color_power = array(
+            'black' =>600,
+            'red'   =>520,
+            'orange'=>480,
+            'huang'=>420,
+            'green'=>360,
+            'cyan'=>300,
+            'blue'=>280,
+            'purple'=>250,
+        );
+        $power_tppe = array(
+            1=>'tongshuai',
+            2=>'zhengzhi',
+            3=>'wuli',
+            4=>'fangyuli',
+            5=>'shengmingli',
+            6=>'meili'
+        );
+        $power = array(
+            'tongshuai' =>0,
+            'zhengzhi'  =>0,
+            'wuli'=>0,
+            'fangyuli'=>0,
+            'shengmingli'=>0,
+            'meili'=>0,
+        );
+        $power_num = !empty($color_power[$color])?$color_power[$color]:250;
+        while($power_num>0){
+            if($power_num>=100){
+                $data_arr  = $this->randomDivInt(100);
+                $power_num = $power_num-100;
+            }else{
+                $data_arr  = $this->randomDivInt($power_num);
+                $power_num = 0;
+            }
+            if(!empty($data_arr)){
+                foreach($data_arr as $k=>$v){
+                    $power[$power_tppe[$k]] = $power[$power_tppe[$k]]+$v;
+                }
+            }
+        }
+       return $power;
+    }
+    private function randomDivInt($power_num){
+        $data  = array();
+        if(!empty($power_num)){
+            $total_money= $power_num;
+            $total_num  = 6;
+            $total_money=$total_money - $total_num;
+            for($i=$total_num;$i>0;$i--){
+                $data[$i]=1;
+                $ls_money=0;
+                if($total_money>0){
+                    if($i==1){
+                        $data[$i] +=$total_money;
+                    }else{
+                        $max_money=floor($total_money/$i);
+                        $ls_money=mt_rand(0,$max_money);
+                        $data[$i]+=$ls_money;
+                    }
+                }
+                $total_money -= $ls_money;
+            }
+        }
+        return $data;
+    }
+    public function get_rand($proArr) {
+        $result = '';
+        //概率数组的总概率精度
+        $proSum = array_sum($proArr); //计算数组中元素的和
+        //概率数组循环
+        foreach ($proArr as $key => $proCur) {
+            $randNum = mt_rand(1, $proSum);
+            if ($randNum <= $proCur) { //如果这个随机数小于等于数组中的一个元素，则返回数组的下标
+                $result = $key;
+                break;
+            } else {
+                $proSum -= $proCur;
+            }
+        }
+        unset ($proArr);
+        return $result;
+    }
+
     public function initCn(){
         $area_type_tail = array(
             '1'=>'村',
@@ -97,6 +250,73 @@ class IndexController extends Controller {
             echo "{$v} end </br>";
         }
         echo "all success </br>";
+    }
+    public function initGeneralName(){
+        $sex_type = array(
+            '8'=>2,
+            '9'=>3,
+        );
+        $area_type_page = array(
+            '8'=>30,
+            '9'=>30
+        );
+        $name_num = 2;
+        foreach ($sex_type as $k=>$v){
+            echo "{$v} start  </br>";
+            for($page=1;$page<=$area_type_page[$k];$page++){
+                if($name_num == 2){
+                    $name_num = 3;
+                }else{
+                    $name_num = 2;
+                }
+                $list = $this->produceGeneralName('','',$name_num,$v);
+                if(!empty($list)){
+                    $insert = array();
+                    foreach ($list as $cn){
+                        $data = array();
+                        $data['type']        = $k;
+                        $data['cn']          = $cn;
+                        $insert[] = $data;
+                    }
+                    $res = M("Cn")->addAll($insert);
+                }
+                echo "{$v} name_num: {$name_num} page:{$page} </br>";
+                $sleep_time = rand(1,4);
+                sleep($sleep_time);
+            }
+            $sleep_time = rand(1,7);
+            sleep($sleep_time);
+            echo "{$v} end </br>";
+        }
+        echo "all success </br>";
+    }
+    //$sex 2:男 3：女
+    private function  produceGeneralName($xing='',$ming='',$name_num=3,$sex=2){
+        $price_url = "https://www.xuanpai.com/tool/names?xing={$xing}&ming={$ming}&name_num={$name_num}&sex={$sex}";
+        $arr       = array();
+        $cont = file_get_contents($price_url);
+        if(!empty($cont)){
+            $regex4="/<div id=\"tool_item\".*?>.*?<\/div>/ism";
+            if(preg_match_all($regex4, $cont, $matches)){
+                if(!empty($matches[0][0])){
+                    //$search = '/<li>(.*?)<\/li>/is';
+                    $search = '/<font color=red>(.*?)<\/font>/is';
+                    preg_match_all($search,$matches[0][0],$xing);
+                    $xing_arr = !empty($xing[1])?$xing[1]:array();
+                    $search = '/<font color=blue>(.*?)<\/font>/is';
+                    preg_match_all($search,$matches[0][0],$ming);
+                    $ming_arr = !empty($ming[1])?$ming[1]:array();
+                    if(!empty($xing_arr) && !empty($ming_arr)){
+                        foreach($xing_arr as $k=>$v){
+                            if(!empty($ming_arr[$k])){
+                                $arr[] = $v.','.$ming_arr[$k];
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return $arr;
     }
     private function  produceCn($word_num=2,$tail='村',$page=1){
         $price_url = "http://www.xuanpai.com/tool/place/{$page}?word_num={$word_num}&tail={$tail}";
