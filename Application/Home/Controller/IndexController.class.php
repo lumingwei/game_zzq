@@ -3,30 +3,80 @@ namespace Home\Controller;
 use Think\Controller;
 class IndexController extends Controller {
     public function index(){
-        if(isset($_REQUEST['spe']) && $_REQUEST['spe']=='lmw666'){
-            $delete_sql[]="truncate table sow.sow_action";
-            $delete_sql[]="truncate table sow.sow_fruits";
-            $delete_sql[]="truncate table sow.sow_goods";
-            $delete_sql[]="truncate table sow.sow_message";
-            $delete_sql[]="truncate table sow.sow_player_action";
-            $delete_sql[]="truncate table sow.sow_player_goods";
-            $delete_sql[]="truncate table sow.sow_tree_stage";
-            $delete_sql[]="truncate table sow.sow_tree_type";
-            $delete_sql[]="truncate table sow.sow_tree_worm";
-            $delete_sql[]="truncate table sow.sow_trees";
-            $delete_sql[]="truncate table sow.sow_weather";
-            foreach($delete_sql as $del){
-                @M()->query($del);
+        $area_color_arr = array(
+            '1'=>'purple',
+            '2'=>'blue',
+            '3'=>'cyan',
+            '4'=>'green',
+            '5'=>'yellow',
+            '6'=>'orange',
+            '7'=>'red',
+        );
+        $area_list_tmp = M('Area')->where(array('server_id'=>1))->field('area_id,name,position_x,position_y,area_type,title')->select();
+        if(!empty($area_list_tmp)){
+            foreach ($area_list_tmp as $v){
+                $area_list[$v['position_x']][$v['position_y']] = $v;
+            }
+            unset($area_list_tmp);
+        }
+        //地图 200*200 40000 四万格子
+        $html = '<table border="1" align="center">';
+        for ($i=0;$i<200;$i++){
+            $html .='<tr align="center" style="width:100px;height: 30px">';
+            for ($j=0;$j<200;$j++){
+                if(!empty($area_list[$i][$j])){
+                    $color = $area_color_arr[$area_list[$i][$j]['area_type']];
+                    $html .= '<td style="background:'.$color.';width:100px;height: 30px">'.$area_list[$i][$j]['name'];
+                }else{
+                    $html .= '<td style="width:100px;height: 30px">'.'荒芜人烟';
+                }
+                $html .= '</td>';
+            }
+            $html .='</tr>';
+        }
+        $html .= '</table>';
+        $this->assign('html',$html);
+        $this->display();
+    }
+    //城市随机分布
+    public function positionArea(){
+        set_time_limit(0);
+        //200*200
+        $exist = array();
+        $area_list_tmp = M('Area')->where(array('server_id'=>1,'position_x'=>0,'position_y'=>0))->field('area_id')->select();
+        if(!empty($area_list_tmp)){
+            foreach ($area_list_tmp as $v){
+                $x     = rand(0,199);
+                $y     = rand(0,199);
+                while(!empty($exist[$x][$y])){
+                    $x     = rand(0,199);
+                    $y     = rand(0,199);
+                    if(empty($exist[$x][$y])){
+                        break;
+                    }
+                }
+                $exist[$x][$y] =1;
+                $res = M("Area")->where(array('area_id'=>$v['area_id']))->save(array('position_x'=>$x,'position_y'=>$y));
+                echo "x:{$x}  y:{$y} </br>";
             }
         }
-        if(isset($_REQUEST['spe']) && $_REQUEST['spe']=='lmw777'){
-            for($i=1;$i<6;$i++){
-                $this->init_data($i);
-            }
-        }
-        exit('success!');
+      echo 'success';
+    }
+    private function color_code($type=0){
+        $color = array(
+            0=>'black',
+            1=>'red',
+            2=>'orange',
+            3=>'yellow',
+            4=>'green',
+            5=>'cyan',
+            6=>'blue',
+            7=>'purple',
+        );
+        return $color[$type];
     }
     public function initArea(){
+        $now = time();
         if(isset($_REQUEST['spe']) && $_REQUEST['spe']=='lmw666'){
             $delete_sql[]="truncate table war.war_area";
             foreach($delete_sql as $del){
@@ -54,7 +104,56 @@ class IndexController extends Controller {
             '6'=>7,
             '7'=>2,
         );
+        $server_id = 1;
+        foreach ($area_type_arr as $k=>$v){
+            $insert      = array();
+            $name_arr    = $this->getGeneralName($k,$area_type_num[$k]);
+            for($i=0;$i<$area_type_num[$k];$i++){
+                $data = array();
+                $data['server_id']          = $server_id;
+                $data['area_type']          = $k;
+                $data['land_type']          = rand(1,10);//土地类型 1：青青草原 2；蜿蜒丘陵 3：沿海渔港 4：荒原沙漠 5：林海雪原 6：海中小岛  7：沙漠绿洲 8：江南水乡 9：崇山峻岭 10：潇湘湖畔
+                $data['name']               = array_pop($name_arr);
+                $data['title']              = $v;
 
+                $data['gold']               = 20*pow(2,$k);
+                $data['food']               = rand(1,$k)*pow(4,$k);
+                $data['wood']               = rand(1,$k)*pow(4,$k);
+                $data['stone']              = rand(1,$k)*pow(3,$k);
+                $data['Iron']               = rand(1,$k)*pow(3,$k);
+
+                if($data['land_type'] == 1){
+                    $data['horse']               = rand(1,7)*pow(2,$k);
+                }else{
+                    $data['horse'] = 0;
+                }
+
+                $data['resource_wood']      = 5000*rand(1,$k)*pow(2,$k);
+                $data['resource_stone']     = 1000*rand(1,$k)*pow(2,$k);
+                $data['resource_Iron']      = 1000*rand(1,$k)*pow(2,$k);
+
+                $data['people']              = 100*rand(1,$k)*pow(2,$k);
+                $data['people_loyal']        = rand(30,100);
+
+                $data['morale']              = rand(60,100);
+
+                $data['area']                 = 1000*rand(1,$k)*pow(2,$k);
+                $data['useful_area']         = intval($data['area']*10*$k/100);
+                $data['occupied_area']       = 0;
+
+                $data['military']              = '';
+                $data['building']              = 0;
+                $data['general']               = 0;
+
+                $data['position_x']              = 0;
+                $data['position_y']              = 0;
+                $data['create_time']              = $now;
+
+                $insert[] = $data;
+            }
+            $res = M("Area")->addAll($insert);
+        }
+        echo 'success!';
     }
     private function getAreaName($type = 0){
         //枫丹白露,苏黎世,洛桑
@@ -112,7 +211,7 @@ class IndexController extends Controller {
             0=>'black',
             1=>'red',
             2=>'orange',
-            3=>'huang',
+            3=>'yellow',
             4=>'green',
             5=>'cyan',
             6=>'blue',
@@ -136,7 +235,7 @@ class IndexController extends Controller {
             'black' =>600,
             'red'   =>520,
             'orange'=>480,
-            'huang'=>420,
+            'yellow'=>420,
             'green'=>360,
             'cyan'=>300,
             'blue'=>280,
