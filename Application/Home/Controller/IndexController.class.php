@@ -2,6 +2,7 @@
 namespace Home\Controller;
 use Think\Controller;
 class IndexController extends Controller {
+    //大地图界面
     public function index(){
         $area_color_arr = array(
             '1'=>'purple',
@@ -20,15 +21,15 @@ class IndexController extends Controller {
             unset($area_list_tmp);
         }
         //地图 200*200 40000 四万格子
-        $html = '<table border="1" align="center">';
+        $html = '<table border="1" align="center" style="width:20000px;height: 20000px">';
         for ($i=0;$i<200;$i++){
-            $html .='<tr align="center" style="width:100px;height: 30px">';
+            $html .='<tr align="center">';
             for ($j=0;$j<200;$j++){
                 if(!empty($area_list[$i][$j])){
                     $color = $area_color_arr[$area_list[$i][$j]['area_type']];
-                    $html .= '<td style="background:'.$color.';width:100px;height: 30px">'.$area_list[$i][$j]['name'];
+                    $html .= '<td style="background:'.$color.';width:100px;height: 100px">'.$area_list[$i][$j]['name'];
                 }else{
-                    $html .= '<td style="width:100px;height: 30px">'.'荒芜人烟';
+                    $html .= '<td style="width:100px;height: 100px">'.'荒芜人烟';
                 }
                 $html .= '</td>';
             }
@@ -37,6 +38,263 @@ class IndexController extends Controller {
         $html .= '</table>';
         $this->assign('html',$html);
         $this->display();
+    }
+
+    //城市管理界面
+    public function areaView(){
+        $area_type_arr = array(
+            '1'=>'乡村',
+            '2'=>'小镇',
+            '3'=>'县城',
+            '4'=>'州城',
+            '5'=>'郡城',
+            '6'=>'王城',
+            '7'=>'帝都',
+        );
+        $land_type_arr = array(
+            '1'=>'青青草原',
+            '2'=>'蜿蜒丘陵',
+            '3'=>'沿海渔港',
+            '4'=>'荒原沙漠',
+            '5'=>'林海雪原',
+            '6'=>'海中小岛',
+            '7'=>'沙漠绿洲',
+            '8'=>'江南水乡',
+            '9'=>'崇山峻岭',
+            '10'=>'潇湘湖畔',
+        );
+
+        $area_id       = !empty($_REQUEST['area_id'])?intval($_REQUEST['area_id']):2789;
+        $area_info     = M("Area")->where(array('area_id'=>$area_id))->find();
+        $area_info['create_time'] = !empty($area_info['create_time'])?date('Y-m-d H:i',$area_info['create_time']):'';
+        $area_info['area_type'] = $area_type_arr[$area_info['area_type']];
+        $area_info['land_type'] = $land_type_arr[$area_info['land_type']];
+        $base_cn   = array(
+            'area_id'=>'地区id',
+            'area_type'=>'地区类型',
+            'server_id'=>'区服id',
+            'player_id'=>'玩家id',
+            'general_id'=>'城主id',
+            'level'=>'城市等级',
+            'land_type'=>'土地类型',
+            'name'=>'地区名称',
+            'title'=>'称号',
+            'gold'=>'黄金',
+            'food'=>'粮食',
+            'wood'=>'木材',
+            'stone'=>'石头',
+            'iron'=>'铁矿',
+            'horse'=>'马匹',
+            'resource_wood'=>'木材资源',
+            'resource_stone'=>'石材资源',
+            'resource_iron'=>'铁矿资源',
+            'people'=>'人口',
+            'people_loyal'=>'民忠',
+            'morale'=>'士气',
+            'area'=>'面积',
+            'useful_area'=>'可用面积',
+            'occupied_area'=>'已使用面积',
+            'military'=>'军事力量',
+            'building'=>'建筑物数量',
+            'general'=>'将领数量',
+            'position_x'=>'x坐标',
+            'position_y'=>'y坐标',
+            'create_time'=>'建立时间',
+        );
+        $cn = array(
+            '基础'=>array(
+                'area_id'=>'地区id',
+                'area_type'=>'地区类型',
+                'server_id'=>'区服id',
+                'player_id'=>'玩家id',
+                'general_id'=>'城主id',
+                'level'=>'城市等级',
+                'land_type'=>'土地类型',
+                'name'=>'地区名称',
+                'title'=>'称号',
+                'people'=>'人口',
+                'people_loyal'=>'民忠',
+                'area'=>'面积',
+                'useful_area'=>'可用面积',
+                'occupied_area'=>'已使用面积',
+                'position_x'=>'x坐标',
+                'position_y'=>'y坐标',
+                'create_time'=>'建立时间',
+            ),
+            '资源'=>array(
+                'gold'=>'黄金',
+                'food'=>'粮食',
+                'wood'=>'木材',
+                'stone'=>'石头',
+                'iron'=>'铁矿',
+                'horse'=>'马匹',
+                'resource_wood'=>'木材资源',
+                'resource_stone'=>'石材资源',
+                'resource_iron'=>'铁矿资源',
+            ),
+            '建筑物'=>array(
+                'building'=>'建筑物数量',
+            ),
+            '军事'=>array(
+                'morale'=>'士气',
+                'military'=>'军事力量',
+                'general'=>'将领数量',
+            ),
+        );
+        $html = '';
+        foreach($cn as $tn =>$col){
+            $html .= '<h1>'.$tn.'</h1>';
+            $html .= '<table border="1" align="center">';
+            $html .='<tr align="center">';
+            foreach($col as $k =>$v){
+                $html .= '<th style="width:100px;height: 30px">'.$v;
+                $html .= '</th>';
+            }
+            $html .='</tr>';
+            $html .='<tr align="center">';
+            foreach($col as $k =>$v){
+                $html .= '<td style="width:100px;height: 30px">'.$area_info[$k];
+                $html .= '</td>';
+            }
+            $html .='</tr>';
+            $html .= '</table>';
+            $html .= '</br>';
+        }
+        //建筑物明细  (建筑物名称 数量 占地面积 产量)
+        $source_cn = array(
+            'people'=>'人口',
+            'people_loyal'=>'民忠',
+            'gold'=>'黄金',
+            'food'=>'粮食',
+            'wood'=>'木材',
+            'stone'=>'石头',
+            'iron'=>'铁矿',
+            'horse'=>'马匹',
+            'general'=>'将领',
+            'morale'=>'士气',
+            'daodunbing'=>'刀盾兵',
+            'qibing'=>'骑兵',
+            'gongjianbing'=>'弓箭手',
+            'jinjun'=>'禁军',
+            'heal'=>'健康',
+            'xiake'=>'侠客',
+            'toushiche'=>'投石车',
+            'xiaoyuchuan'=>'小渔船',
+            'zhanchuan'=>'战船',
+        );
+        //获取建组基础信息
+        $building_col     = array('name'=>'名称','b_num'=>'数量','all_capacity'=>'总容量','produce_source'=>'产量信息','occupied_area'=>'占地面积');
+        $building_arr     = array();
+        $building_arr_tmp = M("Building")->where(1)->select();
+        if(!empty($building_arr_tmp)){
+            foreach($building_arr_tmp as $v){
+                $building_arr[$v['building_id']] = $v;
+            }
+        }
+        $area_building = M("areaBuilding")->field('building_id,sum(capacity) as all_capacity,count(*) as b_num')->where(array('area_id'=>$area_id))->group('building_id')->select();
+        if(!empty($area_building)){
+            foreach($area_building as $k =>$v){
+                $area_building[$k]['name']           = !empty($building_arr[$v['building_id']]['name'])?$building_arr[$v['building_id']]['name']:'';
+                $area_building[$k]['occupied_area'] = $v['b_num']*$building_arr[$v['building_id']]['occupied_area'];
+                if(!empty($building_arr[$v['building_id']]['produce_source'])){
+                    $produce_source_arr                   = array();
+                    $produce_source                       = json_decode($building_arr[$v['building_id']]['produce_source'],true);
+                    foreach($produce_source as $kk=>$val){
+                        if(!empty($source_cn[$kk])){
+                            $produce_source_arr[] = $source_cn[$kk].':'.$val.'/day';
+                        }
+                    }
+                    $area_building[$k]['produce_source'] = !empty($produce_source_arr)?implode(',',$produce_source_arr):'';
+                }else{
+                    $area_building[$k]['produce_source'] = '';
+                }
+            }
+        }
+        $html .= '<h1>建筑物明细</h1>';
+        $html .= '<table border="1" align="center">';
+        $html .='<tr align="center">';
+        foreach($building_col as $v){
+            $html .= '<th style="width:200px;height: 30px">'.$v;
+            $html .= '</th>';
+        }
+        $html .='</tr>';
+        foreach($area_building as $v){
+            $html .='<tr align="center">';
+            foreach($building_col as $kk =>$vv){
+                $html .= '<td style="width:200px;height: 30px">'.$v[$kk];
+                $html .= '</td>';
+            }
+            $html .='</tr>';
+        }
+        $html .= '</table>';
+        $html .= '</br>';
+        $this->assign('html',$html);
+        $this->display('index/index');
+    }
+    //为各个地图生成建筑
+    public function initAreaBuilding(){
+        set_time_limit(0);
+        $area_type_arr = array(
+            '1'=>'乡村',
+            '2'=>'小镇',
+            '3'=>'县城',
+            '4'=>'州城',
+            '5'=>'郡城',
+            '6'=>'王城',
+            '7'=>'帝都',
+        );
+        $area_building_arr = array(
+            '1'=>array('民居'=>array(2,5),'农场'=>array(0,1)),
+            '2'=>array('民居'=>array(10,15),'农场'=>array(2,5)),
+            '3'=>array('民居'=>array(15,25),'农场'=>array(10,15),'伐木场'=>array(2,5),'市场'=>array(1,2),'客栈'=>array(0,1),'酒馆'=>array(0,1),'仓库'=>array(1,2),'府邸'=>array(0,1)),
+            '4'=>array('民居'=>array(30,45),'农场'=>array(20,30),'伐木场'=>array(10,15),'市场'=>array(5,10),'客栈'=>array(3,5),'酒馆'=>array(2,5),'商铺'=>array(2,5),'仓库'=>array(5,10),'步兵营'=>array(0,1),'弓兵营'=>array(0,1),'府邸'=>array(1,5)),
+            '5'=>array('民居'=>array(50,60),'农场'=>array(30,50),'伐木场'=>array(15,20),'市场'=>array(10,20),'客栈'=>array(3,5),'酒馆'=>array(2,5),'商铺'=>array(10,15),'仓库'=>array(10,15),'步兵营'=>array(1,1),'弓兵营'=>array(1,1),'府邸'=>array(5,10)),
+            '6'=>array('民居'=>array(70,100),'农场'=>array(45,60),'伐木场'=>array(30,40),'市场'=>array(30,40),'客栈'=>array(6,15),'酒馆'=>array(6,15),'商铺'=>array(20,30),'仓库'=>array(20,25),'步兵营'=>array(1,3),'弓兵营'=>array(1,3),'校武场'=>array(1,1),'学府'=>array(0,1),'军事府'=>array(0,1),'医馆'=>array(2,5),'工坊'=>array(2,5),'箭楼'=>array(2,5),'城墙'=>array(2,5),'府邸'=>array(10,15)),
+            '7'=>array('民居'=>array(80,120),'农场'=>array(50,80),'伐木场'=>array(40,50),'市场'=>array(30,40),'客栈'=>array(10,15),'酒馆'=>array(10,15),'商铺'=>array(25,35),'仓库'=>array(25,30),'步兵营'=>array(2,5),'弓兵营'=>array(1,3),'校武场'=>array(1,1),'学府'=>array(1,1),'军事府'=>array(1,1),'医馆'=>array(2,5),'工坊'=>array(2,5),'箭楼'=>array(2,5),'城墙'=>array(2,5),'宫殿'=>array(1,1),'府邸'=>array(15,20)),
+        );
+        //获取建组基础信息
+        $building_arr     = array();
+        $building_arr_tmp = M("Building")->where(1)->select();
+        if(!empty($building_arr_tmp)){
+            foreach($building_arr_tmp as $v){
+                $building_arr[$v['name']] = $v;
+            }
+        }
+        //获取城镇列表
+        $area_list = M("Area")->where(1)->select();
+        if(!empty($area_list)){
+            foreach($area_list as $a){
+                $area_occupied_area          = 0;
+                $area_all_building_num       = 0;
+                $insert                      = array();
+                $area_building               = !empty($area_building_arr[$a['area_type']])?$area_building_arr[$a['area_type']]:array();
+                if(!empty($area_building)){
+                     foreach($area_building as $b_name =>$b_num){
+                         if(!empty($building_arr[$b_name])){
+                             $building_num                = rand($b_num[0],$b_num[1]);
+                             $area_all_building_num       += $building_num;
+                             for($i=0;$i<$building_num;$i++){
+                                 $area_occupied_area         += $building_arr[$b_name]['occupied_area'];
+                                 $data = array();
+                                 $data['server_id']          = $a['server_id'];
+                                 $data['area_id']            = $a['area_id'];
+                                 $data['building_id']        = $building_arr[$b_name]['building_id'];
+                                 $data['capacity']           = $building_arr[$b_name]['capacity'];
+                                 $data['create_time']        = $a['create_time'];
+                                 $insert[] = $data;
+                             }
+                         }
+                     }
+                 }
+                if($insert){
+                    $res = M("areaBuilding")->addAll($insert);
+                    if($res){
+                        $res = M("Area")->where(array('area_id'=>$a['area_id']))->save(array('occupied_area'=>$area_occupied_area,'building'=>$area_all_building_num));
+                    }
+                }
+            }
+        }
+        echo 'success';
     }
     //城市随机分布
     public function positionArea(){
