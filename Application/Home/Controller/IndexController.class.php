@@ -5,8 +5,44 @@ class IndexController extends Controller {
 
     //任务管理
     public function task(){
-
+        $now = time();
+        $time['date'] = date('Y 年 m 月 d 日',$now);
+        $week_array=array("日","一","二","三","四","五","六"); //先定义一个数组
+        $time['week'] = "星期".$week_array[date("w",$now)];
+        $this->assign('time',$time);
         $this->display();
+    }
+
+    //任务管理
+    public function addTask(){
+        $content = I('content','','trim');
+        if(empty($content)){
+            $this->json_return(array(),0,'内容为空!');
+        }
+        $now     = time();
+        $ct      = strtotime(date('Y-m-d',$now));
+        $ret     = M('Task')->add(array('uid'=>1,'content'=>$content,'create_time'=>$now,'count_time'=>$ct));
+        if($ret){
+            $this->json_return(array(),1,'操作成功!');
+        }else{
+            $this->json_return(array(),0,'操作失败!');
+        }
+    }
+
+    public function json_return($data = array() , $code = 0 ,$msg = 'success'){
+        $return = array('data'=>$data,'code'=>$code,'msg'=>$msg);
+        $this->showJsonResult($return);
+    }
+
+    public function showJsonResult($data){
+        header( 'Content-type: application/json; charset=UTF-8' );
+        if (isset( $_REQUEST['callback'] ) ) {
+            echo htmlspecialchars( $_REQUEST['callback'] ) , '(' , json_encode( $data ) , ');';
+        } else {
+            echo json_encode( $data, JSON_UNESCAPED_UNICODE );
+        }
+
+        die();
     }
 
     //任务管理
