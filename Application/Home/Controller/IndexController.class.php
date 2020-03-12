@@ -2,6 +2,56 @@
 namespace Home\Controller;
 use Think\Controller;
 class IndexController extends Controller {
+
+    //任务管理
+    public function task(){
+
+        $this->display();
+    }
+
+    //任务管理
+    public function clock(){
+
+        $this->display();
+    }
+
+
+
+    public function echars(){
+        $formula       = !empty($_REQUEST['formula'])?$_REQUEST['formula']:'2*x+10';
+        $x_axis        = !empty($_REQUEST['x_axis'])?$_REQUEST['x_axis']:'1-10';
+        $x_axis_arr    = explode('-',$x_axis);
+        $x_axis_arr[0] = intval($x_axis_arr[0]);
+        $x_axis_arr[1] = intval($x_axis_arr[1]);
+        for($i=$x_axis_arr[0];$i<=$x_axis_arr[1];$i++){
+            $myChart['xAxis']['data'][]     = $i;
+            $y_val                           = str_replace('x',$i,$formula);
+            $y_val                           = eval("return $y_val;");
+            $y_val = number_format(log($i)+$i,2);
+            $myChart['series'][0]['data'][] = $y_val;
+        }
+
+        $myChart['tooltip']['trigger'] = 'axis';
+        $myChart['axisPointer']['type'] = 'cross';
+        $myChart['axisPointer']['label']['backgroundColor'] = '#6a7985';
+
+        $myChart['xAxis']['type'] = 'category';
+        $myChart['xAxis']['boundaryGap'] = false;
+        //$myChart['xAxis']['data'] = array('Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun');
+        $myChart['yAxis']['type'] = 'value';
+        //$myChart['series'][0]['data'] = array(820, 932, 100, 934, 1290, 1330, 1320);
+        $myChart['series'][0]['name'] = 'y值';
+        $myChart['series'][0]['areaStyle'] = (object)array();
+        $myChart['series'][0]['type'] = 'line';
+        $myChart['series'][0]['smooth'] = true;
+        $myChart['series'][0]['label']['normal']['show'] = true;
+        $myChart['series'][0]['label']['normal']['position'] = 'top';
+        $myChart = json_encode($myChart);
+        $this->assign('myChart',$myChart);
+        $this->assign('formula',$formula);
+        $this->assign('x_axis',$x_axis);
+        $this->display();
+    }
     //大地图界面
     public function index(){
         $area_color_arr = array(
