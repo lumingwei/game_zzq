@@ -2,7 +2,6 @@
 namespace Home\Controller;
 use Think\Controller;
 class IndexController extends Controller {
-
     //任务管理
     public function task(){
         $now = time();
@@ -22,10 +21,37 @@ class IndexController extends Controller {
         $now     = time();
         $ct      = strtotime(date('Y-m-d',$now));
         $ret     = M('Task')->add(array('uid'=>1,'content'=>$content,'create_time'=>$now,'count_time'=>$ct));
+        $id      = M()->getLastInsID();
         if($ret){
-            $this->json_return(array(),1,'操作成功!');
+            $this->json_return($id,1,'操作成功!');
         }else{
-            $this->json_return(array(),0,'操作失败!');
+            $this->json_return($id,0,'操作失败!');
+        }
+    }
+
+    //任务管理
+    public function getTask(){
+        $now     = time();
+        $ct      = strtotime(date('Y-m-d',$now));
+        $ret     = M('Task')->where(array('uid'=>1,'count_time'=>$ct))->order('update_time asc,id asc')->select();
+        if($ret){
+            $this->json_return($ret,1,'操作成功!');
+        }else{
+            $this->json_return(array(),1,'操作失败!');
+        }
+    }
+
+    //任务管理
+    public function updateTask(){
+        $id      = I('id','','intval');
+        $status  = I('status',0,'intval');
+        $now     = time();
+        $ct      = strtotime(date('Y-m-d',$now));
+        $ret     = M('Task')->where()->where(array('id'=>$id))->save(array('status'=>$status,'count_time'=>$ct,'update_time'=>$now));
+        if($ret){
+            $this->json_return($ret,1,'操作成功!');
+        }else{
+            $this->json_return(array(),1,'操作失败!');
         }
     }
 
