@@ -47,7 +47,7 @@ class IndexController extends Controller {
         $status  = I('status',0,'intval');
         $now     = time();
         $ct      = strtotime(date('Y-m-d',$now));
-        $ret     = M('Task')->where()->where(array('id'=>$id))->save(array('status'=>$status,'count_time'=>$ct,'update_time'=>$now));
+        $ret     = M('Task')->where(array('id'=>$id))->save(array('status'=>$status,'count_time'=>$ct,'update_time'=>$now));
         if($ret){
             $this->json_return($ret,1,'操作成功!');
         }else{
