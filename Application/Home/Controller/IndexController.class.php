@@ -116,6 +116,7 @@ class IndexController extends Controller {
     }
     //大地图界面
     public function index(){
+        $this->redirect('index/task');
         $area_color_arr = array(
             '1'=>'purple',
             '2'=>'blue',
