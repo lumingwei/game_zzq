@@ -2,8 +2,10 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>拖拽</title>
+<title>任务管理小工具</title>
+<script src="http://www.jq22.com/jquery/jquery-1.10.2.js"></script>
 <script type="text/javascript" src="jquery-1.8.3.min.js"></script>
+<script src="ddsort.js"></script>
 <style type="text/css">
 		input{
 			transition:all 0.30s ease-in-out;
@@ -120,9 +122,14 @@
 			<label style="font-size:22px;">已完成</label>
 		</ul>
 	</div>
-
-
 <script>
+/*	$( '#ready_task' ).DDSort({
+		target: 'li',
+		floatStyle: {
+			'border': '1px solid #ccc',
+			'background-color': '#fff'
+		}
+	});*/
 	$(document).ready(function() {
 		getTask();
 		var date_str = "";
@@ -154,7 +161,6 @@
 		});
 	});
 </script>
-<script src="http://www.jq22.com/jquery/jquery-1.10.2.js"></script>
 <script type="text/javascript">
 function startTime(){
 	if(typeof(countTime) != "undefined"){
@@ -458,13 +464,14 @@ var drag = {
 
 			console.log(drag.tmp_elm[0].dataset.id);
 
-			//异步修改任务状态
-			if(status != -1){
-				updateTask(task_id,status);
-			}
             //恢复容器原背景色
             $(value).css('background-color', '#FFFFF0');
         });
+
+		//异步修改任务状态
+		if(status != -1){
+			updateTask(task_id,status);
+		}
 
     },
 
