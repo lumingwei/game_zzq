@@ -21,5 +21,6 @@ return array(
     'DB_PORT'=>3306,         //数据库端口
     'DB_PREFIX'=>'ta_',      //数据库表前缀
     'DB_CHARSET'=>'utf8',    //数据库字符编码
+    'URL_MODEL'=>0
 );
 
