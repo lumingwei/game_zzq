@@ -1,0 +1,62 @@
+<include file="index:base" />
+<div id="content">
+    <div class="left_menu">
+        <ul id="nav_dot">
+            {$menu_html}
+        </ul>
+    </div>
+    <div class="m-right">
+        <div class="right-nav">
+            <ul>
+                <li><img src="public/images/home.png"></li>
+                <li style="margin-left:25px;">您当前的位置：</li>
+                <li><a href="#">{$position_1}</a></li>
+                <li>></li>
+                <li><a href="#">{$position_2}</a></li>
+            </ul>
+        </div>
+        <div class="main">
+            <form name="search_form" action="{:U('index/room_cat_count_list')}" method="post">
+                &nbsp;分类条件：
+                <select  name="type">
+                    <option value="1" <if condition="$postArr['type'] == 1">selected</if>>按房屋性质</option>
+                    <option value="2" <if condition="$postArr['type'] == 2">selected</if>>按用途规划</option>
+                    <option value="3" <if condition="$postArr['type'] == 3">selected</if>>按经纪机构</option>
+                </select>
+                户室面积：<input type="text" name="sarea"   value="{$postArr['sarea']}" size="24"  />-<input type="text" name="earea"  value="{$postArr['earea']}" size="24"  />
+                <button>查询</button>
+                <input type="reset" value="重置条件">
+            </form>
+            <table class="table" width="100%">
+                <thead align="center">
+                <tr>
+                    <th width="10%">分类</th>
+                    <th width="10%">总套数</th>
+                    <th width="10%">总户室面积</th>
+                    <th width="10%">总车库面积</th>
+                    <th width="10%">总金额</th>
+                </tr>
+                </thead>
+                <tbody align="center">
+                <volist name="list" id="vo" key="k" >
+                    <tr>
+                        <td>{$vo.cat_cn}</td>
+                        <td>{$vo.number}</td>
+                        <td>{$vo.covered_area}</td>
+                        <td>{$vo.garage_area}</td>
+                        <td>{$vo.total_price}</td>
+                    </tr>
+                </volist>
+                </tbody>
+            </table>
+            <div class="pages" style="float:right;">
+                {$page}
+            </div>
+        </div>
+    </div>
+</div>
+<include file="index:footer" />
+
+
+
+

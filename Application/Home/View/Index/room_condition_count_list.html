@@ -1,0 +1,71 @@
+<include file="index:base" />
+<div id="content">
+    <div class="left_menu">
+        <ul id="nav_dot">
+            {$menu_html}
+        </ul>
+    </div>
+    <div class="m-right">
+        <div class="right-nav">
+            <ul>
+                <li><img src="public/images/home.png"></li>
+                <li style="margin-left:25px;">您当前的位置：</li>
+                <li><a href="#">{$position_1}</a></li>
+                <li>></li>
+                <li><a href="#">{$position_2}</a></li>
+            </ul>
+        </div>
+        <div class="main">
+            <form name="search_form" action="{:U('index/room_condition_count_list')}" method="post">
+                &nbsp;房屋坐落：<input type="text" name="address"   value="{$postArr['address']}" size="24"  />&nbsp;
+                经纪机构：
+                   {$company_html}
+                规划用途：
+                <select  name="planning_purposes">
+                    <option value="0">请选择</option>
+                    <option value="1" <if condition="$postArr['planning_purposes'] == 1">selected</if>>住宅</option>
+                    <option value="2" <if condition="$postArr['planning_purposes'] == 2">selected</if>>商业</option>
+                    <option value="3" <if condition="$postArr['planning_purposes'] == 3">selected</if>>办公</option>
+                </select>
+                房屋性质：
+                <select  name="nature">
+                    <option value="0">请选择</option>
+                    <option value="1" <if condition="$postArr['nature'] == 1">selected</if>>商品房</option>
+                    <option value="2" <if condition="$postArr['nature'] == 2">selected</if>>安置房</option>
+                    <option value="3" <if condition="$postArr['nature'] == 3">selected</if>>房改房</option>
+                </select>
+                <br/>
+                &nbsp;归档时间：<input type="text" name="sdate"   value="{$postArr['sdate']}" size="24"  />-<input type="text" name="edate"  value="{$postArr['edate']}" size="24"  />
+                户室面积：<input type="text" name="sarea"   value="{$postArr['sarea']}" size="24"  />-<input type="text" name="earea"  value="{$postArr['earea']}" size="24"  />
+                <button>查询</button>
+                <input type="reset" value="重置条件">
+            </form>
+            <table class="table" width="100%">
+                <thead align="center">
+                <tr>
+                    <th width="10%">成交套数</th>
+                    <th width="10%">成交户室面积</th>
+                    <th width="10%">成交车库面积</th>
+                    <th width="10%">成交金额</th>
+                </tr>
+                </thead>
+                <tbody align="center">
+                <tr>
+                    <td>{$info.number}</td>
+                    <td>{$info.covered_area}</td>
+                    <td>{$info.garage_area}</td>
+                    <td>{$info.total_price}</td>
+                </tr>
+                </tbody>
+            </table>
+            <div class="pages" style="float:right;">
+                {$page}
+            </div>
+        </div>
+    </div>
+</div>
+<include file="index:footer" />
+
+
+
+

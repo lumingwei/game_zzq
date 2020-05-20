@@ -1,0 +1,48 @@
+<include file="index:base" />
+<div id="content">
+    <div class="left_menu">
+        <ul id="nav_dot">
+            {$menu_html}
+        </ul>
+    </div>
+    <div class="m-right">
+        <div class="right-nav">
+            <ul>
+                <li><img src="public/images/home.png"></li>
+                <li style="margin-left:25px;">您当前的位置：</li>
+                <li><a href="#">{$position_1}</a></li>
+                <li>></li>
+                <li><a href="#">{$position_2}</a></li>
+            </ul>
+        </div>
+        <div class="main" style="text-align: center;">
+            <input type="hidden" name="id" value="{$info['id']}">
+            <p>合同编号：<input type="text" name="number" value="{$info['number']}" readonly="readonly"> </p>
+            <p>合同备案号：<input type="text" name="record_number" value="{$info['record_number']}" readonly="readonly"> </p>
+            <p>关联房源id：<input type="text" name="room_id"  value="{$info['room_id']}" readonly="readonly"></p>
+            <p>出卖方：<input type="text" name="seller"  value="{$info['seller']}" readonly="readonly"></p>
+            <p>买受方：<input type="text" name="buyer"  value="{$info['buyer']}" readonly="readonly"></p>
+            <p>成交总价：<input type="text" name="deal_price"  value="{$info['deal_price']}" readonly="readonly"></p>
+            <p>合同状态：<input type="text" name="status"  value="{$info['status']}" readonly="readonly"></p>
+            <p>申请审核时间：<input type="text" name="apply_time"  value="{$info['apply_time']}" readonly="readonly"></p>
+            <p>审核时间：<input type="text" name="check_time"  value="{$info['check_time']}" readonly="readonly"></p>
+            <p>注销时间：<input type="text" name="cancel_time"  value="{$info['cancel_time']}" readonly="readonly"></p>
+            <p>创建时间：<input type="text" name="add_time"  value="{$info['add_time']}" readonly="readonly"></p>
+            <p><a href=”#” onclick="javascript :history.go(-1);">返回</a></p>
+        </div>
+    </div>
+</div>
+<include file="index:footer" />
+<style>
+    p {
+        display: block;
+        -webkit-margin-before: 1em;
+        -webkit-margin-after: 1em;
+        -webkit-margin-start: 0px;
+        -webkit-margin-end: 0px;
+    }
+</style>
+
+
+
+
