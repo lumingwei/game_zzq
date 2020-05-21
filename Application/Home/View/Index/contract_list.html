@@ -80,23 +80,24 @@
                         <td>
                             <if condition="$vo['status'] == 1">
                                 <a href="{:U('index/add_contract')}&id={$vo.id}"  title="修改"><span>修改</span></a>
+                                <a href="{:U('index/sign_contract')}&id={$vo.id}"  title="修改"><span>签订</span></a>
                                 <a href="{:U('index/set_contract_status')}&id={$vo.id}&status=2"  title="提交审核"><span>提交审核</span></a>
                                 <a href="{:U('index/del_contract')}&id={$vo.id}"  title="删除"><span>删除</span></a>
                             </if>
                             <if condition="$vo['status'] == 2">
-                                <a href="{:U('index/look_contract')}&id={$vo.id}"  title="查看"><span>查看</span></a>
+                                <a href="{:U('index/look_sign_contract')}&id={$vo.id}"  title="查看"><span>查看</span></a>
                                 <a href="{:U('index/set_contract_status')}&id={$vo.id}&status=3"  title="通过"><span>通过</span></a>
                                 <a href="{:U('index/set_contract_status')}&id={$vo.id}&status=4"  title="不通过"><span>不通过</span></a>
                             </if>
                             <if condition="$vo['status'] == 3">
-                                <a href="{:U('index/look_contract')}&id={$vo.id}"  title="查看"><span>查看</span></a>
+                                <a href="{:U('index/look_sign_contract')}&id={$vo.id}"  title="查看"><span>查看</span></a>
                                 <a href="{:U('index/set_contract_status')}&id={$vo.id}&status=5"  title="注销"><span>注销</span></a>
                             </if>
                             <if condition="$vo['status'] == 4">
-                                <a href="{:U('index/look_contract')}&id={$vo.id}"  title="查看"><span>查看</span></a>
+                                <a href="{:U('index/look_sign_contract')}&id={$vo.id}"  title="查看"><span>查看</span></a>
                             </if>
                             <if condition="$vo['status'] == 5">
-                                <a href="{:U('index/look_contract')}&id={$vo.id}"  title="查看"><span>查看</span></a>
+                                <a href="{:U('index/look_sign_contract')}&id={$vo.id}"  title="查看"><span>查看</span></a>
                             </if>
                         </td>
                     </tr>

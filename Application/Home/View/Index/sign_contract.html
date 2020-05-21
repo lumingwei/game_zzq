@@ -1,0 +1,330 @@
+<include file="Index:base" />
+<script type="text/javascript" src="Public/wangEditor/release/wangEditor.min.js"></script>
+<div id="content">
+    <div class="left_menu">
+        <ul id="nav_dot">
+            {$menu_html}
+        </ul>
+    </div>
+    <div class="m-right">
+        <div class="right-nav">
+            <ul>
+                <li><img src="Public/images/home.png"></li>
+                <li style="margin-left:25px;">您当前的位置：</li>
+                <li><a href="#">{$position_1}</a></li>
+                <li>></li>
+                <li><a href="#">{$position_2}</a></li>
+            </ul>
+        </div>
+        <div class="main" style="text-align: center;">
+            <form id='editRealMsgForm' enctype="multipart/form-data" action="#"  method="post">
+                <span class="col-lg-8" id="editor"></span>
+                <p><input type="submit" value="提交"></p>
+            </form>
+            <input type="hidden" id="contract_id" value="{$info['id']}">
+            <input id="contract_detail" type="hidden" value="{$detail}">
+            <p><a href=”#” onclick="javascript :history.go(-1);">返回</a></p>
+        </div>
+    </div>
+</div>
+<include file="Index:footer" />
+<style>
+    .w-e-text-container {
+        height: 700px !important; /*!important是重点，因为原div是行内样式设置的高度300px*/
+    }
+    p {
+        display: block;
+        -webkit-margin-before: 1em;
+        -webkit-margin-after: 1em;
+        -webkit-margin-start: 0px;
+        -webkit-margin-end: 0px;
+    }
+</style>
+<script>
+    $(document).ready(function() {
+
+// 使用 jQuery异步提交表单
+        $('#editRealMsgForm').submit(function() {
+            var detail = editor.txt.html();
+            var contract_id = $('#contract_id').val();
+            jQuery.ajax({
+
+                url:'{:U("index/sign_contract")}',
+
+                data:{detail:detail,id:contract_id},
+
+                type:"POST",
+
+                beforeSend:function()
+                {
+                },
+                success:function(data)
+                {
+                    if(data.status == 1){
+                        alert(data.info);
+                        window.location.href = data.url;
+                    }else{
+                        alert(data.info);
+                    }
+                }
+
+            });
+
+            return false;
+
+        });
+
+    });
+    var E = window.wangEditor;
+    var editor = new E('#editor');
+    editor.create();
+    // 自定义菜单配置
+    editor.customConfig.menus = [
+        'head',  // 标题
+        'bold',  // 粗体
+        'fontSize',  // 字号
+        'fontName',  // 字体
+        'italic',  // 斜体
+        'underline',  // 下划线
+        'strikeThrough',  // 删除线
+        'foreColor',  // 文字颜色
+        'backColor',  // 背景颜色
+        'link',  // 插入链接
+        'list',  // 列表
+        'justify',  // 对齐方式
+        'quote',  // 引用
+        'emoticon',  // 表情
+        'image',  // 插入图片
+        'table',  // 表格
+        'video',  // 插入视频
+        'code',  // 插入代码
+        'undo',  // 撤销
+        'redo'  // 重复
+    ];
+    var init_data = '<p style="text-align:center;">\n' +
+        '\t<strong><span style="font-family:宋体;font-size:18pt;"><span style="font-family:宋体;">存</span> <span style="font-family:宋体;">量</span> <span style="font-family:宋体;">房</span> <span style="font-family:宋体;">买</span> <span style="font-family:宋体;">卖</span> <span style="font-family:宋体;">合</span> <span style="font-family:宋体;">同</span></span></strong>\n' +
+        '</p>\n' +
+        '<p style="text-align:center;">\n' +
+        '\t<strong><span style="font-family:宋体;font-size:12pt;"><span style="font-family:宋体;">（</span></span></strong><span style="font-family:宋体;font-size:12.0000pt;"><span style="font-family:宋体;">合同编号：</span>*********</span><strong><span style="font-family:宋体;font-size:12pt;"><span style="font-family:宋体;">）</span></span></strong>\n' +
+        '</p>\n' +
+        '<p style="text-align:center;">\n' +
+        '\t<strong><span style="font-family:宋体;font-size:12pt;">&nbsp;</span></strong>\n' +
+        '</p>\n' +
+        '<p style="text-align: center;">\n' +
+        '\t<span style="font-family:宋体;font-size:12.0000pt;"><span style="font-family:宋体;">出卖方（以下简称甲方）</span></span><u><span style="font-family:宋体;font-size:12pt;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></u><span style="font-family:宋体;font-size:12.0000pt;">&nbsp;○(个人)○(单位)</span>\n' +
+        '</p>\n' +
+        '<p style="text-align: center;">\n' +
+        '\t<span style="font-family:宋体;font-size:12.0000pt;">○(身份证)○(营业执照)证号</span><u><span style="font-family:宋体;font-size:12pt;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></u>\n' +
+        '</p>\n' +
+        '<p style="text-align: center;">\n' +
+        '\t<span style="font-family:宋体;font-size:12.0000pt;"><span style="font-family:宋体;">地址</span></span><u><span style="font-family:宋体;font-size:12pt;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></u><span style="font-family:宋体;font-size:12.0000pt;">&nbsp;<span style="font-family:宋体;">电话</span> </span><u><span style="font-family:宋体;font-size:12pt;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></u>\n' +
+        '</p>\n' +
+        '<p style="text-align: center;">\n' +
+        '\t<span style="font-family:宋体;font-size:12.0000pt;"><span style="font-family:宋体;">代理人</span></span><u><span style="font-family:宋体;font-size:12pt;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></u><span style="font-family:宋体;font-size:12.0000pt;">&nbsp;<span style="font-family:宋体;">身份证号</span></span><u><span style="font-family:宋体;font-size:12pt;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></u>\n' +
+        '</p>\n' +
+        '<p style="text-align: center;">\n' +
+        '\t<span style="font-family:宋体;font-size:12.0000pt;"><span style="font-family:宋体;">地址</span></span><u><span style="font-family:宋体;font-size:12pt;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></u><span style="font-family:宋体;font-size:12.0000pt;">&nbsp;<span style="font-family:宋体;">电话</span> </span><u><span style="font-family:宋体;font-size:12pt;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></u>\n' +
+        '</p>\n' +
+        '<p style="text-align: center;">\n' +
+        '\t<span style="font-family:宋体;font-size:12.0000pt;">&nbsp;</span>\n' +
+        '</p>\n' +
+        '<p style="text-align: center;">\n' +
+        '\t<span style="font-family:宋体;font-size:12.0000pt;"><span style="font-family:宋体;">买受方（以下简称乙方）：</span></span><u><span style="font-family:宋体;font-size:12pt;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></u><span style="font-family:宋体;font-size:12.0000pt;">&nbsp;○(个人)○(单位)</span>\n' +
+        '</p>\n' +
+        '<p style="text-align: center;">\n' +
+        '\t<span style="font-family:宋体;font-size:12.0000pt;">○(身份证)○(营业执照)证号</span><u><span style="font-family:宋体;font-size:12pt;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></u>\n' +
+        '</p>\n' +
+        '<p style="text-align: center;">\n' +
+        '\t<span style="font-family:宋体;font-size:12.0000pt;"><span style="font-family:宋体;">地址</span></span><u><span style="font-family:宋体;font-size:12pt;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></u><span style="font-family:宋体;font-size:12.0000pt;">&nbsp;<span style="font-family:宋体;">电话</span> </span><u><span style="font-family:宋体;font-size:12pt;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></u>\n' +
+        '</p>\n' +
+        '<p style="text-align: center;">\n' +
+        '\t<span style="font-family:宋体;font-size:12.0000pt;"><span style="font-family:宋体;">代理人</span></span><u><span style="font-family:宋体;font-size:12pt;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></u><span style="font-family:宋体;font-size:12.0000pt;">&nbsp;<span style="font-family:宋体;">身份证号</span></span><u><span style="font-family:宋体;font-size:12pt;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></u>\n' +
+        '</p>\n' +
+        '<p style="text-align: center;">\n' +
+        '\t<span style="font-family:宋体;font-size:12.0000pt;"><span style="font-family:宋体;">地址</span></span><u><span style="font-family:宋体;font-size:12pt;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></u><span style="font-family:宋体;font-size:12.0000pt;">&nbsp;<span style="font-family:宋体;">电话</span> </span><u><span style="font-family:宋体;font-size:12pt;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></u>\n' +
+        '</p>\n' +
+        '<p style="text-align: center;">\n' +
+        '\t<br>\n' +
+        '\t\n' +
+        '</p>\n' +
+        '<p style="text-align: center;">\n' +
+        '\t<span style="font-family:宋体;font-size:12.0000pt;"><span style="font-family:宋体;">根据《中华人民共和国合同法》、《中华人民共和国城市房地产管理法》、《中华人民共和国物权法》、《城市房地产转让管理规定》等法律、规章之规定，经友好协商，本着平等互利的原则，就该存量房买卖的有关事项达成一致，订立本合同。</span></span>\n' +
+        '</p>\n' +
+        '<p style="text-align: center;">\n' +
+        '\t<span style="font-family:宋体;font-size:12.0000pt;"><strong>第一条</strong>&nbsp;</span><span style="font-family:宋体;font-size:12.0000pt;"><span style="font-family:宋体;">房屋基本情况</span></span>\n' +
+        '</p>\n' +
+        '<p style="text-align: center;">\n' +
+        '\t<span style="font-family:宋体;font-size:12.0000pt;">1.甲方所售房屋（以下简称该房屋）规划用途为 </span><u><span style="font-family:宋体;font-size:12pt;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></u><span style="font-family:宋体;font-size:12.0000pt;"><span style="font-family:宋体;">，性质为</span> </span><u><span style="font-family:宋体;font-size:12pt;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></u><span style="font-family:宋体;font-size:12.0000pt;"><span style="font-family:宋体;">。坐落于</span></span><u><span style="font-family:宋体;font-size:12pt;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></u><span style="font-family:宋体;font-size:12.0000pt;">&nbsp;</span><u><span style="font-family:宋体;font-size:12pt;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></u><span style="font-family:宋体;font-size:12.0000pt;"><span style="font-family:宋体;">，建筑面积为</span></span><u><span style="font-family:宋体;font-size:12pt;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></u><span style="font-family:宋体;font-size:12.0000pt;"><span style="font-family:宋体;">平方米，附属阁楼面积为</span></span><u><span style="font-family:宋体;font-size:12pt;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></u><span style="font-family:宋体;font-size:12.0000pt;"><span style="font-family:宋体;">平方米。</span></span>\n' +
+        '</p>\n' +
+        '<p style="text-align: center;">\n' +
+        '\t<span style="font-family:宋体;font-size:12.0000pt;">2.甲方所售车库坐落于</span><u><span style="font-family:宋体;font-size:12pt;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></u><span style="font-family:宋体;font-size:12.0000pt;"><span style="font-family:宋体;">，面积为</span></span><u><span style="font-family:宋体;font-size:12pt;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></u><span style="font-family:宋体;font-size:12.0000pt;"><span style="font-family:宋体;">平方米；车位坐落于</span></span><u><span style="font-family:宋体;font-size:12pt;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></u><span style="font-family:宋体;font-size:12.0000pt;"><span style="font-family:宋体;">，面积为</span></span><u><span style="font-family:宋体;font-size:12pt;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></u><span style="font-family:宋体;font-size:12.0000pt;"><span style="font-family:宋体;">平方米。&nbsp;</span></span>\n' +
+        '</p>\n' +
+        '<p style="text-align: center;">\n' +
+        '\t<span style="font-family: 宋体; font-size: 12pt;">3.该房屋不动产权（所有权）证号</span><span style="text-decoration-line: underline;"><span style="font-family:宋体;font-size:12pt;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></span><span style="font-family: 宋体; font-size: 12pt;">，国有土地使用权证号</span><span style="text-decoration-line: underline;"><span style="font-family:宋体;font-size:12pt;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></span><span style="font-family: 宋体; font-size: 12pt;">，土地使用权类型</span><span style="text-decoration-line: underline;"><span style="font-family:宋体;font-size:12pt;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></span><span style="font-family: 宋体; font-size: 12pt;">。随该房屋一并转让的附属设施等详见附件一。&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</span>\n' +
+        '</p>\n' +
+        '<p style="text-align: center;">\n' +
+        '\t<strong><span style="font-family:宋体;font-size:12pt;"><span style="font-family:宋体;">第二条</span></span></strong><span style="font-family:宋体;font-size:12.0000pt;">&nbsp;<span style="font-family:宋体;">凡出售房屋为房改房的适用本条。根据南通市人民政府通政发</span>[1998]第104号及通房改[1998]第39号等文件的规定，甲方出卖的房改房建筑面积必须以南通市房产管理部门审核的建筑面积为准，甲、乙双方在签订本合同时已对审核的房改房面积作了充分了解，经审核的房改房面积为</span><u><span style="font-family:宋体;font-size:12pt;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></u><span style="font-family:宋体;font-size:12.0000pt;"><span style="font-family:宋体;">平方米。</span></span>\n' +
+        '</p>\n' +
+        '<p style="text-align: center;">\n' +
+        '\t<strong><span style="font-family:宋体;font-size:12pt;"><span style="font-family:宋体;">第三条</span></span></strong><span style="font-family:宋体;font-size:12.0000pt;">&nbsp;<span style="font-family:宋体;">甲、乙双方协议本合同项下的房地产成交总价款（人民币，以下同）共计（小写）</span></span><u><span style="font-family:宋体;font-size:12pt;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></u><span style="font-family:宋体;font-size:12.0000pt;"><span style="font-family:宋体;">元整，（大写）</span></span><u><span style="font-family:宋体;font-size:12pt;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></u><span style="font-family:宋体;font-size:12.0000pt;"><span style="font-family:宋体;">元整。其中：</span></span>\n' +
+        '</p>\n' +
+        '<p style="text-align: center;">\n' +
+        '\t<span style="font-family:宋体;font-size:12.0000pt;"><span style="font-family:宋体;">房屋成交价款（小写）</span></span><u><span style="font-family:宋体;font-size:12pt;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></u><span style="font-family:宋体;font-size:12.0000pt;"><span style="font-family:宋体;">元整，（大写）</span></span><u><span style="font-family:宋体;font-size:12pt;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></u><span style="font-family:宋体;font-size:12.0000pt;"><span style="font-family:宋体;">元整；</span></span>\n' +
+        '</p>\n' +
+        '<p style="text-align: center;">\n' +
+        '\t<span style="font-family:宋体;font-size:12.0000pt;"><span style="font-family:宋体;">阁楼成交价款（小写）</span></span><u><span style="font-family:宋体;font-size:12pt;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></u><span style="font-family:宋体;font-size:12.0000pt;"><span style="font-family:宋体;">元整，（大写）</span></span><u><span style="font-family:宋体;font-size:12pt;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></u><span style="font-family:宋体;font-size:12.0000pt;"><span style="font-family:宋体;">元整；</span></span>\n' +
+        '</p>\n' +
+        '<p style="text-align: center;">\n' +
+        '\t<span style="font-family:宋体;font-size:12.0000pt;"><span style="font-family:宋体;">车库成交价款（小写）</span></span><u><span style="font-family:宋体;font-size:12pt;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></u><span style="font-family:宋体;font-size:12.0000pt;"><span style="font-family:宋体;">元整，（大写）</span></span><u><span style="font-family:宋体;font-size:12pt;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></u><span style="font-family:宋体;font-size:12.0000pt;"><span style="font-family:宋体;">元整；</span></span>\n' +
+        '</p>\n' +
+        '<p style="text-align: center;">\n' +
+        '\t<span style="font-family:宋体;font-size:12.0000pt;"><span style="font-family:宋体;">车位成交价款（小写）</span></span><u><span style="font-family:宋体;font-size:12pt;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></u><span style="font-family:宋体;font-size:12.0000pt;"><span style="font-family:宋体;">元整，（大写）</span></span><u><span style="font-family:宋体;font-size:12pt;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></u><span style="font-family:宋体;font-size:12.0000pt;"><span style="font-family:宋体;">元整。</span></span>\n' +
+        '</p>\n' +
+        '<p style="text-align: center;">\n' +
+        '\t<strong><span style="font-family:宋体;font-size:12pt;"><span style="font-family:宋体;">第四条</span></span></strong><span style="font-family:宋体;font-size:12.0000pt;">&nbsp;<span style="font-family:宋体;">乙方向甲方支付房款的方式为</span> &nbsp;○ 一次性全额付款 &nbsp;○ 分期付款 &nbsp;&nbsp;&nbsp;&nbsp;</span>\n' +
+        '</p>\n' +
+        '<p style="text-align: center;">\n' +
+        '\t<span style="font-family:宋体;font-size:12.0000pt;">○首付（小写）</span><u><span style="font-family:宋体;font-size:12pt;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></u><span style="font-family:宋体;font-size:12.0000pt;"><span style="font-family:宋体;">元和抵押贷款（小写）</span></span><u><span style="font-family:宋体;font-size:12pt;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></u><span style="font-family:宋体;font-size:12.0000pt;"><span style="font-family:宋体;">元。</span></span>\n' +
+        '</p>\n' +
+        '<p style="text-align: center;">\n' +
+        '\t<strong><span style="font-family:宋体;font-size:12pt;"><span style="font-family:宋体;">第五条</span></span></strong><span style="font-family:宋体;font-size:12.0000pt;">&nbsp;<span style="font-family:宋体;">乙方具体付款金额和期限为：</span></span>\n' +
+        '</p>\n' +
+        '<p style="text-align: center;">\n' +
+        '\t<span style="font-family:宋体;font-size:12.0000pt;">1.</span><u><span style="font-family:宋体;font-size:12pt;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></u><span style="font-family:宋体;font-size:12.0000pt;">&nbsp;<span style="font-family:宋体;">前向甲方第一次支付（小写）</span></span><u><span style="font-family:宋体;font-size:12pt;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></u><span style="font-family:宋体;font-size:12.0000pt;"><span style="font-family:宋体;">元；</span></span>\n' +
+        '</p>\n' +
+        '<p style="text-align: center;">\n' +
+        '\t<span style="font-family:宋体;font-size:12.0000pt;">2.</span><u><span style="font-family:宋体;font-size:12pt;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></u><span style="font-family:宋体;font-size:12.0000pt;">&nbsp;<span style="font-family:宋体;">前向甲方第二次支付（小写）</span></span><u><span style="font-family:宋体;font-size:12pt;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></u><span style="font-family:宋体;font-size:12.0000pt;"><span style="font-family:宋体;">元；</span></span>\n' +
+        '</p>\n' +
+        '<p style="text-align: center;">\n' +
+        '\t<span style="font-family:宋体;font-size:12.0000pt;">3.</span><u><span style="font-family:宋体;font-size:12pt;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></u><span style="font-family:宋体;font-size:12.0000pt;">&nbsp;<span style="font-family:宋体;">前向甲方第三次支付（小写）</span></span><u><span style="font-family:宋体;font-size:12pt;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></u><span style="font-family:宋体;font-size:12.0000pt;"><span style="font-family:宋体;">元；</span></span>\n' +
+        '</p>\n' +
+        '<p style="text-align: center;">\n' +
+        '\t<span style="font-family:宋体;font-size:12.0000pt;">4.其他约定 </span><u><span style="font-family:宋体;font-size:12pt;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></u><span style="font-family:宋体;font-size:12.0000pt;"><span style="font-family:宋体;">。</span></span>\n' +
+        '</p>\n' +
+        '<p style="text-align: center;">\n' +
+        '\t<strong><span style="font-family:宋体;font-size:12pt;"><span style="font-family:宋体;">第六条</span></span></strong><span style="font-family:宋体;font-size:12.0000pt;">&nbsp;<span style="font-family:宋体;">房屋过户手续应当在</span></span><u><span style="font-family:宋体;font-size:12pt;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></u><span style="font-family:宋体;font-size:12.0000pt;"><span style="font-family:宋体;">前办理，房屋应当在</span></span><u><span style="font-family:宋体;font-size:12pt;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></u><span style="font-family:宋体;font-size:12.0000pt;"><span style="font-family:宋体;">前交付。根据《江苏省物业管理条例》第</span>48条的规定，房屋所有权发生转移时，甲方应该与物业服务企业结清服务费用。</span>\n' +
+        '</p>\n' +
+        '<p style="text-align: center;">\n' +
+        '\t<strong><span style="font-family:宋体;font-size:12pt;"><span style="font-family:宋体;">第七条</span></span></strong><span style="font-family:宋体;font-size:12.0000pt;">&nbsp;<span style="font-family:宋体;">违约责任</span></span>\n' +
+        '</p>\n' +
+        '<p style="text-align: center;">\n' +
+        '\t<span style="font-family:宋体;font-size:12.0000pt;">1.甲方应保证上述房产权属清楚，若发生与该房产有关的产权纠纷或债务纠纷，概由甲方承担，由此给乙方造成的经济损失，由甲方负责赔偿。</span>\n' +
+        '</p>\n' +
+        '<p style="text-align: center;">\n' +
+        '\t<span style="font-family:宋体;font-size:12.0000pt;">2.若甲方不能按合同约定期限办理过户、交付房产或乙方不能按合同约定期限支付房款，每逾期一日，由违约一方按日向对方支付相当于房屋成交总价款</span><u><span style="font-family:宋体;font-size:12pt;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></u><span style="font-family:宋体;font-size:12.0000pt;"><span style="font-family:宋体;">（万分之）的违约金。</span></span>\n' +
+        '</p>\n' +
+        '<p style="text-align: center;">\n' +
+        '\t<span style="font-family:宋体;font-size:12.0000pt;">3.其他：</span><u><span style="font-family:宋体;font-size:12pt;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></u><span style="font-family:宋体;font-size:12.0000pt;"><span style="font-family:宋体;">。</span></span>\n' +
+        '</p>\n' +
+        '<p style="text-align: center;">\n' +
+        '\t<strong><span style="font-family:宋体;font-size:12pt;"><span style="font-family:宋体;">第八条</span></span></strong><span style="font-family:宋体;font-size:12.0000pt;">&nbsp;<span style="font-family:宋体;">本协议在履行过程中发生的争议，由协议双方协商解决；协商不成的，按下述第</span> </span><u><span style="font-family:宋体;font-size:12pt;">&nbsp;&nbsp;&nbsp;&nbsp;</span></u><span style="font-family:宋体;font-size:12.0000pt;">&nbsp;<span style="font-family:宋体;">种方式解决：</span></span>\n' +
+        '</p>\n' +
+        '<p style="text-align: center;">\n' +
+        '\t<span style="font-family:宋体;font-size:12.0000pt;">1.提交 </span><u><span style="font-family:宋体;font-size:12pt;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></u><span style="font-family:宋体;font-size:12.0000pt;">&nbsp;<span style="font-family:宋体;">仲裁委员会仲裁。</span></span>\n' +
+        '</p>\n' +
+        '<p style="text-align: center;">\n' +
+        '\t<span style="font-family:宋体;font-size:12.0000pt;">2.依法向房屋所在地人民法院起诉。</span>\n' +
+        '</p>\n' +
+        '<p style="text-align: center;">\n' +
+        '\t<strong><span style="font-family:宋体;font-size:12pt;"><span style="font-family:宋体;">第九条</span></span></strong><span style="font-family:宋体;font-size:12.0000pt;">&nbsp;<span style="font-family:宋体;">末尽事宜，双方可在本合同附件二协商约定补充协议。补充协议是本合同不可分割的组成部分，具有同等法律效力。</span></span>\n' +
+        '</p>\n' +
+        '<p style="text-align: center;">\n' +
+        '\t<strong><span style="font-family:宋体;font-size:12pt;"><span style="font-family:宋体;">第十条</span></span></strong><span style="font-family:宋体;font-size:12.0000pt;">&nbsp;<span style="font-family:宋体;">双方关于交易税费和中介费承担等其他事项的约定</span> </span><u><span style="font-family:宋体;font-size:12pt;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></u>\n' +
+        '</p>\n' +
+        '<p style="text-align: center;">\n' +
+        '\t<u><span style="font-family:宋体;font-size:12pt;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></u><span style="font-family:宋体;font-size:12.0000pt;"><span style="font-family:宋体;">。</span></span>\n' +
+        '</p>\n' +
+        '<p style="text-align: center;">\n' +
+        '\t<strong><span style="font-family:宋体;font-size:12pt;"><span style="font-family:宋体;">第十一条</span></span></strong><span style="font-family:宋体;font-size:12.0000pt;">&nbsp;<span style="font-family:宋体;">甲、乙双方共同委托</span></span><u><span style="font-family:宋体;font-size:12pt;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></u><span style="font-family:宋体;font-size:12.0000pt;"><span style="font-family:宋体;">办理存量房网上合同备案手续。</span></span>\n' +
+        '</p>\n' +
+        '<p style="text-align: center;">\n' +
+        '\t<strong><span style="font-family:宋体;font-size:12pt;"><span style="font-family:宋体;">第十二条</span></span></strong><span style="font-family:宋体;font-size:12.0000pt;">&nbsp;<span style="font-family:宋体;">本合同经甲、乙双方签字或盖章后生效。本合同连同附件及签章页共</span></span><u><span style="font-family:宋体;font-size:12pt;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></u><span style="font-family:宋体;font-size:12.0000pt;"><span style="font-family:宋体;">页，一式</span></span><u><span style="font-family:宋体;font-size:12pt;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></u><span style="font-family:宋体;font-size:12.0000pt;"><span style="font-family:宋体;">份，具有同等法律效力，一份由存量房交易管理部门收执。</span></span>\n' +
+        '</p>\n' +
+        '<p style="text-align: center;">\n' +
+        '\t<span style="font-family:宋体;font-size:12.0000pt;">&nbsp;</span>\n' +
+        '</p>\n' +
+        '<p style="text-align: center;">\n' +
+        '\t<span style="font-family:宋体;font-size:12.0000pt;"><span style="font-family:宋体;">甲方（签章）：</span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="font-family:宋体;">乙方（签章）：</span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>\n' +
+        '</p>\n' +
+        '<p style="text-align: center;">\n' +
+        '\t<span style="font-family:宋体;font-size:12.0000pt;"><span style="font-family:宋体;">甲方代理人（签章）：</span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="font-family:宋体;">乙方代理人（签章）：</span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>\n' +
+        '</p>\n' +
+        '<p style="text-align: center;">\n' +
+        '\t<span style="font-family:宋体;font-size:12.0000pt;"><span style="font-family:宋体;">签署日期：</span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="font-family:宋体;">签署日期：</span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>\n' +
+        '</p>\n' +
+        '<p style="text-align: center;">\n' +
+        '\t<span style="font-family:宋体;font-size:12.0000pt;">&nbsp;</span>\n' +
+        '</p>\n' +
+        '<p style="text-align: center;">\n' +
+        '\t<span style="font-family:宋体;font-size:12.0000pt;"><span style="font-family:宋体;">居间代理机构</span></span><u><span style="font-family:宋体;font-size:12pt;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></u><span style="font-family:宋体;font-size:12.0000pt;"><span style="font-family:宋体;">承诺甲、乙双方签字真实有效，如有不实，愿承担由此带来的经济、法律责任。</span></span>\n' +
+        '</p>\n' +
+        '<p style="text-align: center;">\n' +
+        '\t<span style="font-family:宋体;font-size:12.0000pt;">&nbsp;</span>\n' +
+        '</p>\n' +
+        '<p style="text-align: center;">\n' +
+        '\t<span style="font-family:宋体;font-size:12.0000pt;"><span style="font-family:宋体;">居间代理机构（签章）：&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</span></span>\n' +
+        '</p>\n' +
+        '<p style="text-align: center;">\n' +
+        '\t<span style="font-family: 宋体; font-size: 12pt;">联系电话：&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</span>\n' +
+        '</p>\n' +
+        '<p style="text-align: center;">\n' +
+        '\t<span style="font-family:宋体;font-size:12.0000pt;"><span style="font-family:宋体;">日期：</span>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</span>\n' +
+        '</p>\n' +
+        '<p style="text-align: center;">\n' +
+        '\t<span style="font-family:宋体;font-size:12.0000pt;">&nbsp;</span>\n' +
+        '</p>\n' +
+        '<p style="text-align: center;">\n' +
+        '\t<strong><span style="font-family:宋体;font-size:12pt;">&nbsp;</span></strong>\n' +
+        '</p>\n' +
+        '<p style="text-align: center;">\n' +
+        '\t<strong><span style="font-family:宋体;font-size:12pt;"><span style="font-family:宋体;">附件一</span> </span></strong><span style="font-family:宋体;font-size:12.0000pt;"><span style="font-family:宋体;">随房转让的房屋附属物品清单及装修情况</span></span>\n' +
+        '</p>\n' +
+        '<p style="text-align: center;">\n' +
+        '\t<span style="font-family:宋体;font-size:12.0000pt;">1.附属设备情况</span>\n' +
+        '</p>\n' +
+        '<p style="text-align: center;">\n' +
+        '\t<u><span style="font-family:宋体;font-size:12pt;">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;</span></u>\n' +
+        '</p>\n' +
+        '<p style="text-align: center;">\n' +
+        '\t<span style="font-family:宋体;font-size:12.0000pt;">&nbsp;</span>\n' +
+        '</p>\n' +
+        '<p style="text-align: center;">\n' +
+        '\t<span style="font-family:宋体;font-size:12.0000pt;">2.房屋装修情况</span>\n' +
+        '</p>\n' +
+        '<p style="text-align: center;">\n' +
+        '\t<u><span style="font-family:宋体;font-size:12pt;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></u>\n' +
+        '</p>\n' +
+        '<p style="text-align: center;">\n' +
+        '\t<strong><span style="font-family:宋体;font-size:12pt;">&nbsp;</span></strong>\n' +
+        '</p>\n' +
+        '<p style="text-align: center;">\n' +
+        '\t<strong><span style="font-family:宋体;font-size:12pt;"><span style="font-family:宋体;">附件二</span></span></strong><span style="font-family:宋体;font-size:12.0000pt;">&nbsp;<span style="font-family:宋体;">补充协议</span></span>\n' +
+        '</p>\n' +
+        '<p style="text-align: center;">\n' +
+        '\t<u><span style="font-family:宋体;font-size:12pt;">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;</span></u>\n' +
+        '</p>\n' +
+        '<p><br></p>';
+
+    var has_detail = $('#contract_detail').val();
+
+    if(has_detail){
+        editor.txt.html(has_detail);
+    }else{
+        editor.txt.html(init_data);
+    }
+    function HTMLEncode(html) {
+        var temp = document.createElement("div");
+        (temp.textContent != null) ? (temp.textContent = html) : (temp.innerText = html);
+        var output = temp.innerHTML;
+        temp = null;
+        return output;
+    }
+    // 设置内容
+    //editor.txt.html(content);
+    // 获取内容
+    //var content = editor.txt.html();
+</script>
+
+
+
+

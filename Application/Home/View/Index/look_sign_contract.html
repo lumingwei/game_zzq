@@ -1,0 +1,54 @@
+<include file="Index:base" />
+<div id="content">
+    <div class="left_menu">
+        <ul id="nav_dot">
+            {$menu_html}
+        </ul>
+    </div>
+    <div class="m-right">
+        <div class="right-nav">
+            <ul>
+                <li><img src="Public/images/home.png"></li>
+                <li style="margin-left:25px;">您当前的位置：</li>
+                <li><a href="#">{$position_1}</a></li>
+                <li>></li>
+                <li><a href="#">{$position_2}</a></li>
+            </ul>
+        </div>
+        <div class="main" style="text-align: center;">
+            <p><a href=”#” class="sel_btn ch_cls" onclick="javascript :history.go(-1);">返回</a></p>
+            <input type="hidden" name="id" value="{$info['id']}">
+            {$detail}
+        </div>
+    </div>
+</div>
+<include file="Index:footer" />
+<style>
+    p {
+        display: block;
+        -webkit-margin-before: 1em;
+        -webkit-margin-after: 1em;
+        -webkit-margin-start: 0px;
+        -webkit-margin-end: 0px;
+    }
+    .sel_btn{
+        height: 21px;
+        line-height: 21px;
+        padding: 0 11px;
+        background: #02bafa;
+        border: 1px #26bbdb solid;
+        border-radius: 3px;
+        /*color: #fff;*/
+        display: inline-block;
+        text-decoration: none;
+        font-size: 12px;
+        outline: none;
+    }
+    .ch_cls{
+        background: #e4e4e4;
+    }
+</style>
+
+
+
+

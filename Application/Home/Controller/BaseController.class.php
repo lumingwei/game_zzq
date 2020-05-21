@@ -43,7 +43,7 @@ class BaseController extends Controller
                         //'已归档合同查询'    =>array('code'=>'checked_contract_list','href'=>U("index/checked_contract_list")),
                         //'已注销合同查询'    =>array('code'=>'cancel_contract_list','href'=>U("index/cancel_contract_list")),
                     ),
-                    'code'=>array('add_contract','contract_list','uncheck_contract_list','checked_contract_list','cancel_contract_list')
+                    'code'=>array('look_sign_contract','sign_contract','add_contract','contract_list','uncheck_contract_list','checked_contract_list','cancel_contract_list')
                 ),
                 '存量房数据统计分析' =>array(
                     'list' =>array(

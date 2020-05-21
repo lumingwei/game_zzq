@@ -345,7 +345,7 @@ class IndexController extends BaseController {
         return !empty($arr[$nature])?$arr[$nature]:'';
     }
 
-    //合同签订
+    //新增合同
     public function add_contract(){
         $id       = I('id',0,'intval');
         if(!empty($id)){
@@ -374,6 +374,44 @@ class IndexController extends BaseController {
         }else{
             $this->assign('info',!empty($info)?$info:array());
         }
+        $this->display(); // 输出模板
+    }
+
+    //合同签订
+    public function sign_contract(){
+        $id           = I('id',0,'intval');
+        $detail       = I('detail','');
+        if(!empty($id)){
+            $info = M('contract')->where(array('id'=>$id))->find();
+        }
+        if(empty($info)){
+            $this->error('合同信息不存在');
+        }
+        if(IS_AJAX){
+            $ret            = M('contract')->where(array('id'=>$id))->save(array('detail'=>$detail));
+            if($ret){
+                $this->success('操作成功', U('index/contract_list'));
+            }else{
+                $this->error('操作失败');
+            }
+        }else{
+            $this->assign('detail',!empty(trim($info['detail']))?$info['detail']:'');
+            $this->assign('info',$info);
+        }
+        $this->display(); // 输出模板
+    }
+
+    //合同签订 查看
+    public function look_sign_contract(){
+        $id           = I('id',0,'intval');
+        $detail       = I('detail','');
+        if(!empty($id)){
+            $info = M('contract')->where(array('id'=>$id))->find();
+        }
+        if(empty($info)){
+            $this->error('合同信息不存在');
+        }
+        $this->assign('detail',html_entity_decode($info['detail']));
         $this->display(); // 输出模板
     }
 
