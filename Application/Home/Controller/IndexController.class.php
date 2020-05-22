@@ -307,14 +307,14 @@ class IndexController extends BaseController {
     public function del_room(){
         $id = I('id',0,'intval');
         if(empty($id)){
-            $this->error('非法参数', U('index/company_user_list'));
+            $this->error('非法参数', U('index/room_list'));
         }
-        $company    = M('company_user');
+        $company    = M('room');
         $ret        = $company->where(array('id'=>$id))->delete();
         if($ret){
-            $this->success('操作成功', U('index/company_user_list'));
+            $this->success('操作成功', U('index/room_list'));
         }else{
-            $this->error('操作失败', U('index/company_user_list'));
+            $this->error('操作失败', U('index/room_list'));
         }
     }
 
@@ -343,6 +343,21 @@ class IndexController extends BaseController {
             3=>'房改房',
         );
         return !empty($arr[$nature])?$arr[$nature]:'';
+    }
+
+    //删除合同
+    public function del_contract(){
+        $id = I('id',0,'intval');
+        if(empty($id)){
+            $this->error('非法参数', U('index/contract_list'));
+        }
+        $company    = M('contract');
+        $ret        = $company->where(array('id'=>$id))->delete();
+        if($ret){
+            $this->success('操作成功', U('index/contract_list'));
+        }else{
+            $this->error('操作失败', U('index/contract_list'));
+        }
     }
 
     //新增合同

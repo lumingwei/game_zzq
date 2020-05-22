@@ -60,7 +60,7 @@
                     <th width=10%">车位坐落</th>
                     <th width="5%">不动产证号</th>
                     <th width="10%">经纪机构</th>
-                    <th width="10%">操作</th>
+                    <th width="11%">操作</th>
                 </tr>
                 </thead>
                 <tbody align="center">
@@ -80,7 +80,7 @@
                         <td>
                             <if condition="$vo['status'] == 1">
                                 <a href="{:U('index/add_contract')}&id={$vo.id}"  title="修改"><span>修改</span></a>
-                                <a href="{:U('index/sign_contract')}&id={$vo.id}"  title="修改"><span>签订</span></a>
+                                <a href="{:U('index/sign_contract')}&id={$vo.id}"  title="签订"><span>签订</span></a>
                                 <a href="{:U('index/set_contract_status')}&id={$vo.id}&status=2"  title="提交审核"><span>提交审核</span></a>
                                 <a href="{:U('index/del_contract')}&id={$vo.id}"  title="删除"><span>删除</span></a>
                             </if>
